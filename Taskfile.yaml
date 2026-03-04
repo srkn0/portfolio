@@ -1,0 +1,13 @@
+version: "3"
+
+tasks:
+  tailwind:
+    desc: Generate Tailwind CSS
+    cmds:
+      - |
+        npx @tailwindcss/cli -i app.css -o ./public/css/index.css
+  templ:
+    desc: Generate TemplUI components
+    cmds:
+      - |
+        templ generate

@@ -1,0 +1,61 @@
+root = "."
+testdata_dir = "testdata"
+tmp_dir = "tmp"
+
+[build]
+args_bin = ["web"]
+bin = "./tmp/main"
+cmd = "go build -buildvcs=false -o ./tmp/main"
+delay = 0
+exclude_dir = ["tmp", "node_modules", "_volumes", "public"]
+exclude_file = ["*_templ.go"]
+exclude_regex = [".+_templ.go"]
+exclude_unchanged = false
+follow_symlink = false
+full_bin = ""
+include_dir = []
+include_ext = ["go", "templ", "html", "css"]
+include_file = []
+kill_delay = "0s"
+log = "build-errors.log"
+poll = false
+poll_interval = 0
+post_cmd = []
+pre_cmd = [
+    "rm -f ./tmp/main",
+    "find ./internal/templates -name '*_templ.go' -delete",
+    "clear",
+    "task templ",
+    "task tailwind",
+]
+rerun = false
+rerun_delay = 100
+send_interrupt = false
+stop_on_error = false
+
+[color]
+app = ""
+build = "yellow"
+main = "magenta"
+runner = "green"
+watcher = "cyan"
+
+[log]
+main_only = false
+silent = false
+time = false
+
+[misc]
+clean_on_exit = true
+
+[proxy]
+app_port = 0
+enabled = false
+proxy_port = 0
+
+[screen]
+clear_on_rebuild = false
+keep_scroll = true
+
+[watch]
+exclude_file = ["*_templ.go"]
