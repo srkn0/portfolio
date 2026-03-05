@@ -1,0 +1,19 @@
+package layouts
+
+import "github.com/srkn0/main/internal/templates/constants"
+
+templ Index() {
+	<!DOCTYPE html>
+	<html lang="de">
+		<head>
+			<title>SK - Portfolio</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="/public/css/index.css" rel="stylesheet"/>
+		</head>
+		<body>
+			<div id={ constants.GlobalToastID }></div>
+			{ children... }
+		</body>
+	</html>
+}

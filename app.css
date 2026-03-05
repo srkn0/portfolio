@@ -1,0 +1,15 @@
+@import "tailwindcss" source("./{data,pkg,internal,public}/**/*.{templ,html,go,js,md}");
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html { scroll-behavior: smooth; }
+
+@layer base {
+    body { @apply bg-white text-slate-900 font-sans; }
+}
+
+@font-face {
+    font-family: barlow;
+    src: url("/public/fonts/barlow.ttf") format("opentype");
+}

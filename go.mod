@@ -3,6 +3,8 @@ module github.com/srkn0/main
 go 1.26.2
 
 require (
+	github.com/Oudwins/tailwind-merge-go v0.2.0
+	github.com/a-h/templ v0.3.1001
 	github.com/go-chi/chi v1.5.5
 	github.com/go-chi/chi/v5 v5.2.5
 )
