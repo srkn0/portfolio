@@ -1,0 +1,7 @@
+{
+    "componentsDir": "pkg/templui",
+    "utilsDir": "pkg/templui/utils",
+    "moduleName": "github.com/srkn0/main",
+    "jsDir": "public/js",
+    "jsPublicPath": "/public/js"
+}
