@@ -1,0 +1,14 @@
+package components
+
+import "context"
+
+templ Header(ctx context.Context) {
+	<header class="sticky top-0 z-50 px-4 py-3 bg-white border-b border-slate-200">
+		<div class="flex items-center justify-between max-w-5xl mx-auto">
+			<a href="/" class="font-extrabold">SK</a>
+			<nav class="flex gap-4 text-sm">
+				<a href="/blog">Blog</a>
+			</nav>
+		</div>
+	</header>
+}

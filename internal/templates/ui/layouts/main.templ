@@ -1,0 +1,17 @@
+package layouts
+
+import (
+	"context"
+
+	"github.com/srkn0/main/internal/templates/constants"
+	"github.com/srkn0/main/internal/templates/ui/components"
+)
+
+templ MainPageLayout(ctx context.Context) {
+	@BasePageLayout() {
+		@components.Header(ctx)
+		<main id={ constants.MainContentID } class="flex flex-col grow">
+			{ children... }
+		</main>
+	}
+}
