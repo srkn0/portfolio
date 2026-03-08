@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"embed"
 	"io/fs"
 	"log"
@@ -10,8 +9,9 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
-	"github.com/srkn0/main/internal/templates/ui/layouts"
+	"github.com/srkn0/main/internal/templates/templatetargets"
 	"github.com/srkn0/main/internal/templates/ui/pages"
+	"github.com/srkn0/main/pkg/util/render"
 )
 
 //go:embed all:public
@@ -24,9 +24,7 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.Background()
-		layouts.Index().Render(ctx, w)
-		pages.LandingPage().Render(ctx, w)
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.LandingPage(r.Context()))
 	})
 	r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.FS(publicSub))))
 	log.Println("listening on :8080")
