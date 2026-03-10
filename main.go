@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
+	markdowntohtml "github.com/srkn0/main/internal/markdown_to_html"
 	"github.com/srkn0/main/internal/templates/templatetargets"
 	"github.com/srkn0/main/internal/templates/ui/pages"
 	"github.com/srkn0/main/pkg/util/render"
@@ -17,14 +18,31 @@ import (
 //go:embed all:public
 var publicFS embed.FS
 
+//go:embed all:data
+var dataFS embed.FS
+
 func main() {
 	publicSub, _ := fs.Sub(publicFS, "public")
+	postsFS, _ := fs.Sub(dataFS, "data/posts")
+	if err := markdowntohtml.LoadPosts(postsFS); err != nil { log.Fatal(err) }
+
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.LandingPage(r.Context()))
+	})
+	r.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
+		posts := markdowntohtml.GetAllPosts("de")
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogList(r.Context(), posts))
+	})
+	r.Get("/blog/{slug}", func(w http.ResponseWriter, r *http.Request) {
+		slug := chi.URLParam(r, "slug")
+		post, ok := markdowntohtml.GetPost(slug, "de")
+		if !ok { http.NotFound(w, r); return }
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogPost(r.Context(), post))
 	})
 	r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.FS(publicSub))))
 	log.Println("listening on :8080")
