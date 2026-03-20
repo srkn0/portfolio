@@ -15,10 +15,20 @@ templ Index(ctx context.Context) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link href="/public/css/index.css" rel="stylesheet"/>
+			<script>
+				(function(){try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme:dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})();
+			</script>
 		</head>
 		<body>
 			<div id={ constants.GlobalToastID }></div>
 			{ children... }
+			<script>
+				function toggleTheme() {
+					var html = document.documentElement;
+					var isDark = html.classList.toggle('dark');
+					localStorage.setItem('theme', isDark ? 'dark' : 'light');
+				}
+			</script>
 		</body>
 	</html>
 }
