@@ -12,6 +12,7 @@ import (
 	markdowntohtml "github.com/srkn0/main/internal/markdown_to_html"
 	"github.com/srkn0/main/internal/templates/templatetargets"
 	"github.com/srkn0/main/internal/templates/ui/pages"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
 	"github.com/srkn0/main/pkg/util/render"
 )
 
@@ -21,28 +22,49 @@ var publicFS embed.FS
 //go:embed all:data
 var dataFS embed.FS
 
+//go:embed all:locales
+var localesFS embed.FS
+
 func main() {
 	publicSub, _ := fs.Sub(publicFS, "public")
 	postsFS, _ := fs.Sub(dataFS, "data/posts")
-	if err := markdowntohtml.LoadPosts(postsFS); err != nil { log.Fatal(err) }
+	localesSub, _ := fs.Sub(localesFS, "locales")
+
+	i18npkg.Init(localesSub)
+	if err := markdowntohtml.LoadPosts(postsFS); err != nil {
+		log.Fatal(err)
+	}
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(i18npkg.Middleware)
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.LandingPage(r.Context()))
 	})
 	r.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
-		posts := markdowntohtml.GetAllPosts("de")
+		posts := markdowntohtml.GetAllPosts(i18npkg.GetLocale(r.Context()))
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogList(r.Context(), posts))
 	})
 	r.Get("/blog/{slug}", func(w http.ResponseWriter, r *http.Request) {
 		slug := chi.URLParam(r, "slug")
-		post, ok := markdowntohtml.GetPost(slug, "de")
-		if !ok { http.NotFound(w, r); return }
+		post, ok := markdowntohtml.GetPost(slug, i18npkg.GetLocale(r.Context()))
+		if !ok {
+			http.NotFound(w, r)
+			return
+		}
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogPost(r.Context(), post))
+	})
+	r.Get("/lang", func(w http.ResponseWriter, r *http.Request) {
+		lang := r.URL.Query().Get("set")
+		if !i18npkg.IsValidLang(lang) {
+			lang = "de"
+		}
+		i18npkg.SetLangCookie(w, lang)
+		w.Header().Set("HX-Redirect", r.Header.Get("HX-Current-URL"))
+		w.WriteHeader(http.StatusOK)
 	})
 	r.Handle("/public/*", http.StripPrefix("/public/", http.FileServer(http.FS(publicSub))))
 	log.Println("listening on :8080")
