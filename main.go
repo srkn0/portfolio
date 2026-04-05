@@ -28,10 +28,14 @@ var localesFS embed.FS
 func main() {
 	publicSub, _ := fs.Sub(publicFS, "public")
 	postsFS, _ := fs.Sub(dataFS, "data/posts")
+	projectsFS, _ := fs.Sub(dataFS, "data/projects")
 	localesSub, _ := fs.Sub(localesFS, "locales")
 
 	i18npkg.Init(localesSub)
 	if err := markdowntohtml.LoadPosts(postsFS); err != nil {
+		log.Fatal(err)
+	}
+	if err := markdowntohtml.LoadProjects(projectsFS); err != nil {
 		log.Fatal(err)
 	}
 
@@ -51,17 +55,22 @@ func main() {
 	r.Get("/blog/{slug}", func(w http.ResponseWriter, r *http.Request) {
 		slug := chi.URLParam(r, "slug")
 		post, ok := markdowntohtml.GetPost(slug, i18npkg.GetLocale(r.Context()))
-		if !ok {
-			http.NotFound(w, r)
-			return
-		}
+		if !ok { http.NotFound(w, r); return }
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogPost(r.Context(), post))
+	})
+	r.Get("/projects", func(w http.ResponseWriter, r *http.Request) {
+		projects := markdowntohtml.GetAllProjects(i18npkg.GetLocale(r.Context()))
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectList(r.Context(), projects))
+	})
+	r.Get("/projects/{slug}", func(w http.ResponseWriter, r *http.Request) {
+		slug := chi.URLParam(r, "slug")
+		project, ok := markdowntohtml.GetProject(slug, i18npkg.GetLocale(r.Context()))
+		if !ok { http.NotFound(w, r); return }
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectDetail(r.Context(), project))
 	})
 	r.Get("/lang", func(w http.ResponseWriter, r *http.Request) {
 		lang := r.URL.Query().Get("set")
-		if !i18npkg.IsValidLang(lang) {
-			lang = "de"
-		}
+		if !i18npkg.IsValidLang(lang) { lang = "de" }
 		i18npkg.SetLangCookie(w, lang)
 		w.Header().Set("HX-Redirect", r.Header.Get("HX-Current-URL"))
 		w.WriteHeader(http.StatusOK)
