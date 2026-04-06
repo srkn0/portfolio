@@ -1,0 +1,36 @@
+package pages
+
+import (
+	"context"
+
+	markdowntohtml "github.com/srkn0/main/internal/markdown_to_html"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+)
+
+templ ProjectList(ctx context.Context, projects []markdowntohtml.ProjectSummary) {
+    <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "projects_title") }</h1>
+        <div class="flex flex-col gap-6">
+            for _, p := range projects {
+                <a href={ "/projects/" + p.Slug } class="group block rounded-lg border border-border bg-card p-5 sm:p-6 transition-colors hover:bg-accent/50 hover:border-primary/30">
+                    <h2 class="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">{ p.Title }</h2>
+                    if p.Description != "" {
+                        <p class="text-muted-foreground text-sm leading-relaxed line-clamp-2 mt-2">{ p.Description }</p>
+                    }
+                </a>
+            }
+        </div>
+    </section>
+}
+
+templ ProjectDetail(ctx context.Context, project markdowntohtml.Project) {
+    <article class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
+        <header class="mb-10">
+            <a href="/projects" class="text-sm text-muted-foreground hover:text-primary transition-colors">{ i18npkg.T(ctx, "back_to_projects") }</a>
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-4">{ project.Title }</h1>
+        </header>
+        <div class="prose prose-neutral dark:prose-invert max-w-none">
+            @templ.Raw(project.HTMLContent)
+        </div>
+    </article>
+}
