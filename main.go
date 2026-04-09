@@ -29,15 +29,13 @@ func main() {
 	publicSub, _ := fs.Sub(publicFS, "public")
 	postsFS, _ := fs.Sub(dataFS, "data/posts")
 	projectsFS, _ := fs.Sub(dataFS, "data/projects")
+	cvFS, _ := fs.Sub(dataFS, "data/cv")
 	localesSub, _ := fs.Sub(localesFS, "locales")
 
 	i18npkg.Init(localesSub)
-	if err := markdowntohtml.LoadPosts(postsFS); err != nil {
-		log.Fatal(err)
-	}
-	if err := markdowntohtml.LoadProjects(projectsFS); err != nil {
-		log.Fatal(err)
-	}
+	if err := markdowntohtml.LoadPosts(postsFS); err != nil { log.Fatal(err) }
+	if err := markdowntohtml.LoadProjects(projectsFS); err != nil { log.Fatal(err) }
+	if err := markdowntohtml.LoadCV(cvFS); err != nil { log.Fatal(err) }
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -67,6 +65,9 @@ func main() {
 		project, ok := markdowntohtml.GetProject(slug, i18npkg.GetLocale(r.Context()))
 		if !ok { http.NotFound(w, r); return }
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectDetail(r.Context(), project))
+	})
+	r.Get("/cv", func(w http.ResponseWriter, r *http.Request) {
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.CV(r.Context(), markdowntohtml.GetCV(i18npkg.GetLocale(r.Context()))))
 	})
 	r.Get("/lang", func(w http.ResponseWriter, r *http.Request) {
 		lang := r.URL.Query().Get("set")
