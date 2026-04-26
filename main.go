@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
-	markdowntohtml "github.com/srkn0/main/internal/markdown_to_html"
+	"github.com/srkn0/main/internal/content"
 	"github.com/srkn0/main/internal/templates/templatetargets"
 	"github.com/srkn0/main/internal/templates/ui/pages"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
@@ -33,9 +33,12 @@ func main() {
 	localesSub, _ := fs.Sub(localesFS, "locales")
 
 	i18npkg.Init(localesSub)
-	if err := markdowntohtml.LoadPosts(postsFS); err != nil { log.Fatal(err) }
-	if err := markdowntohtml.LoadProjects(projectsFS); err != nil { log.Fatal(err) }
-	if err := markdowntohtml.LoadCV(cvFS); err != nil { log.Fatal(err) }
+	posts, err := content.LoadPosts(postsFS)
+	if err != nil { log.Fatal(err) }
+	projects, err := content.LoadProjects(projectsFS)
+	if err != nil { log.Fatal(err) }
+	cv, err := content.LoadCV(cvFS)
+	if err != nil { log.Fatal(err) }
 
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -47,27 +50,27 @@ func main() {
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.LandingPage(r.Context()))
 	})
 	r.Get("/blog", func(w http.ResponseWriter, r *http.Request) {
-		posts := markdowntohtml.GetAllPosts(i18npkg.GetLocale(r.Context()))
-		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogList(r.Context(), posts))
+		ps, _, _ := posts.GetAll(1, 10, i18npkg.GetLocale(r.Context()))
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogList(r.Context(), ps))
 	})
 	r.Get("/blog/{slug}", func(w http.ResponseWriter, r *http.Request) {
 		slug := chi.URLParam(r, "slug")
-		post, ok := markdowntohtml.GetPost(slug, i18npkg.GetLocale(r.Context()))
+		post, ok := posts.Get(slug, i18npkg.GetLocale(r.Context()))
 		if !ok { http.NotFound(w, r); return }
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.BlogPost(r.Context(), post))
 	})
 	r.Get("/projects", func(w http.ResponseWriter, r *http.Request) {
-		projects := markdowntohtml.GetAllProjects(i18npkg.GetLocale(r.Context()))
-		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectList(r.Context(), projects))
+		ps := projects.GetAll(i18npkg.GetLocale(r.Context()))
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectList(r.Context(), ps))
 	})
 	r.Get("/projects/{slug}", func(w http.ResponseWriter, r *http.Request) {
 		slug := chi.URLParam(r, "slug")
-		project, ok := markdowntohtml.GetProject(slug, i18npkg.GetLocale(r.Context()))
+		project, ok := projects.Get(slug, i18npkg.GetLocale(r.Context()))
 		if !ok { http.NotFound(w, r); return }
 		render.Layout(r.Context(), r, w, templatetargets.Main, pages.ProjectDetail(r.Context(), project))
 	})
 	r.Get("/cv", func(w http.ResponseWriter, r *http.Request) {
-		render.Layout(r.Context(), r, w, templatetargets.Main, pages.CV(r.Context(), markdowntohtml.GetCV(i18npkg.GetLocale(r.Context()))))
+		render.Layout(r.Context(), r, w, templatetargets.Main, pages.CV(r.Context(), cv.Get(i18npkg.GetLocale(r.Context()))))
 	})
 	r.Get("/lang", func(w http.ResponseWriter, r *http.Request) {
 		lang := r.URL.Query().Get("set")

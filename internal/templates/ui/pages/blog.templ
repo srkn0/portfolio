@@ -2,19 +2,21 @@ package pages
 
 import (
 	"context"
+	"fmt"
 
-	markdowntohtml "github.com/srkn0/main/internal/markdown_to_html"
+	"github.com/srkn0/main/internal/content"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
 )
 
-templ BlogList(ctx context.Context, posts []markdowntohtml.PostSummary) {
+templ BlogList(ctx context.Context, posts []content.PostSummary) {
     <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-10">Blog</h1>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "blog_title") }</h1>
         <div class="flex flex-col gap-6">
             for _, post := range posts {
                 <a href={ "/blog/" + post.Slug } class="group block rounded-lg border border-border bg-card p-6 transition-colors hover:bg-accent/50 hover:border-primary/30">
                     <div class="flex items-center justify-between gap-4">
                         <h2 class="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">{ post.Title }</h2>
-                        <time class="text-sm text-muted-foreground whitespace-nowrap">{ post.Date.Format("02.01.2006") }</time>
+                        <time class="text-sm text-muted-foreground whitespace-nowrap">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
                     </div>
                     if post.Description != "" {
                         <p class="text-muted-foreground text-sm leading-relaxed line-clamp-2 mt-2">{ post.Description }</p>
@@ -22,15 +24,16 @@ templ BlogList(ctx context.Context, posts []markdowntohtml.PostSummary) {
                 </a>
             }
         </div>
+        _ = fmt.Sprint
     </section>
 }
 
-templ BlogPost(ctx context.Context, post markdowntohtml.Post) {
+templ BlogPost(ctx context.Context, post content.Post) {
     <article class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
         <header class="mb-10">
-            <a href="/blog" class="text-sm text-muted-foreground hover:text-primary transition-colors">← Zurück zum Blog</a>
+            <a href="/blog" class="text-sm text-muted-foreground hover:text-primary transition-colors">{ i18npkg.T(ctx, "back_to_blog") }</a>
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-4">{ post.Title }</h1>
-            <time class="text-sm text-muted-foreground mt-3 block">{ post.Date.Format("02.01.2006") }</time>
+            <time class="text-sm text-muted-foreground mt-3 block">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
         </header>
         <div class="prose prose-neutral dark:prose-invert max-w-none">
             @templ.Raw(post.HTMLContent)
