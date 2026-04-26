@@ -1,9 +1,8 @@
-package markdowntohtml
+package content
 
 import (
 	"bytes"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/yuin/goldmark"
@@ -14,12 +13,17 @@ import (
 	"go.abhg.dev/goldmark/frontmatter"
 )
 
+const defaultLocale = "de"
+
+func isSupportedLocale(locale string) bool {
+	return locale == "de" || locale == "en"
+}
+
 func convertMarkdown(src []byte) (htmlContent string, meta map[string]any, err error) {
 	md := goldmark.New(
 		goldmark.WithExtensions(
 			extension.GFM,
 			extension.Footnote,
-			extension.Typographer,
 			&frontmatter.Extender{Mode: frontmatter.SetMetadata},
 		),
 		goldmark.WithParserOptions(
@@ -61,15 +65,4 @@ func parseMeta(meta map[string]any) (title, description string, tags []string, d
 		}
 	}
 	return title, description, tags, date, nil
-}
-
-func parseFilename(name string) (slug string, locale string) {
-	name = strings.TrimSuffix(name, ".md")
-	if idx := strings.LastIndex(name, "."); idx > 0 {
-		potentialLocale := name[idx+1:]
-		if potentialLocale == "en" || potentialLocale == "de" {
-			return name[:idx], potentialLocale
-		}
-	}
-	return name, "de"
 }
