@@ -1,0 +1,14 @@
+package pages
+
+import (
+	"context"
+
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+)
+
+templ Contact(ctx context.Context) {
+    <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-6">{ i18npkg.T(ctx, "contact_title") }</h1>
+        <p>{ i18npkg.T(ctx, "contact_desc") }</p>
+    </section>
+}
