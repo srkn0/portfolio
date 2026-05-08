@@ -19,13 +19,23 @@ var dataFS embed.FS
 var publicFS embed.FS
 
 func main() {
-	localesSub, _ := fs.Sub(localesFS, "locales")
-	dataSub, _ := fs.Sub(dataFS, "data")
-	publicSub, _ := fs.Sub(publicFS, "public")
+	localesSub := mustSub(localesFS, "locales")
+	dataSub := mustSub(dataFS, "data")
+	publicSub := mustSub(publicFS, "public")
 
-	i18n.Init(localesSub)
+	if err := i18n.Init(localesSub); err != nil {
+		log.Fatalf("i18n init: %v", err)
+	}
 
 	if err := server.Run(dataSub, publicSub); err != nil {
-		log.Fatal(err)
+		log.Fatalf("server: %v", err)
 	}
+}
+
+func mustSub(fsys fs.FS, dir string) fs.FS {
+	sub, err := fs.Sub(fsys, dir)
+	if err != nil {
+		log.Fatalf("sub fs %q: %v", dir, err)
+	}
+	return sub
 }
