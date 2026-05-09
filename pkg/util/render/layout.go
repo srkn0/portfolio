@@ -26,8 +26,10 @@ func Layout(ctx context.Context, req *http.Request, w io.Writer, targets Templat
 		}
 		return index(page).Render(ctx, w)
 	}
+
 	if target, ok := targets[req.Header.Get("HX-Target")]; ok {
 		return target(page).Render(ctx, w)
 	}
+
 	return page.Render(ctx, w)
 }
