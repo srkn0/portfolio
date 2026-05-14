@@ -4,21 +4,93 @@ import (
 	"context"
 
 	i18npkg "github.com/srkn0/main/pkg/i18n"
+	"github.com/srkn0/main/pkg/templui/button"
+	"github.com/srkn0/main/pkg/templui/icon"
+	"github.com/srkn0/main/internal/templates/constants"
 )
 
+func langClass(active bool) string {
+	if active {
+		return "bg-primary/20 text-primary font-semibold"
+	}
+	return "text-muted-foreground hover:text-foreground"
+}
+
 templ Header(ctx context.Context) {
-	<header class="sticky top-0 z-50 px-4 py-3 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
-		<div class="flex items-center justify-between max-w-5xl mx-auto">
-			<a href="/" class="font-extrabold">SK</a>
-			<nav class="flex gap-4 text-sm items-center">
-				<a href="/blog">{ i18npkg.T(ctx, "nav_blog") }</a>
-				<div class="flex items-center gap-1 text-xs">
-					<a href="/lang?set=en" class="px-1.5 py-0.5 rounded">EN</a>
-					<span>|</span>
-					<a href="/lang?set=de" class="px-1.5 py-0.5 rounded">DE</a>
-				</div>
-				<button onclick="toggleTheme()" class="ml-2 p-1.5 rounded">☀</button>
-			</nav>
-		</div>
-	</header>
+    <header id="app-header" class="sticky top-0 z-50 transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] px-3 sm:px-6 py-3 sm:py-4 bg-transparent">
+        <div class="flex items-center justify-between max-w-[80rem] mx-auto">
+            <a href="/" class="kill-link-style" hx-get="/" hx-target="#main-content" hx-push-url="true">
+                <span class="inline-flex items-center justify-center w-11 h-11 rounded-md border-[3px] border-primary text-primary text-xl font-extrabold tracking-tight select-none transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] bg-primary/10 backdrop-blur-[8px] hover:scale-110">SK</span>
+            </a>
+            <nav class="flex items-center gap-0.5 sm:gap-2">
+                @button.Button(button.Props{
+                    Class: "glass-nav-btn",
+                    Attributes: templ.Attributes {
+                        "hx-get": "/blog",
+                        "hx-target": "#"+constants.MainContentID,
+                        "hx-push-url": "true",
+                    },
+                }) {
+                    @icon.StickyNote()
+                    <span class="hidden sm:inline">{ i18npkg.T(ctx, "nav_blog") }</span>
+                }
+
+                @button.Button(button.Props{
+                    Class: "glass-nav-btn",
+                    Attributes: templ.Attributes {
+                        "hx-get": "/projects",
+                        "hx-target": "#"+constants.MainContentID,
+                        "hx-push-url": "true",
+                    },
+                }) {
+                    @icon.FolderKanban()
+                    <span class="hidden sm:inline">{ i18npkg.T(ctx, "nav_projects") }</span>
+                }
+
+                @button.Button(button.Props{
+                    Class: "glass-nav-btn",
+                    Attributes: templ.Attributes {
+                        "hx-get": "/cv",
+                        "hx-target": "#"+constants.MainContentID,
+                        "hx-push-url": "true",
+                    },
+                }) {
+                    @icon.FileUser()
+                    <span class="hidden sm:inline">{ i18npkg.T(ctx, "nav_cv") }</span>
+                }
+                @button.Button(button.Props{
+                    Class: "glass-nav-btn",
+                    Attributes: templ.Attributes {
+                        "hx-get": "/contact",
+                        "hx-target": "#"+constants.MainContentID,
+                        "hx-push-url": "true",
+                    },
+                }) {
+                    @icon.UserPen()
+                    <span class="hidden sm:inline">{ i18npkg.T(ctx, "nav_contact") }</span>
+                }
+                @langSwitcher(i18npkg.GetLocale(ctx))
+                <button
+                    id="theme-toggle"
+                    type="button"
+                    class="glass-nav-btn ml-1"
+                    onclick="toggleTheme()"
+                    aria-label="Toggle dark mode"
+                >
+                    <svg id="theme-icon-light" class="hidden dark:block" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    <svg id="theme-icon-dark" class="block dark:hidden" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                </button>
+            </nav>
+        </div>
+    </header>
+}
+
+templ langSwitcher(current string) {
+    <div class="ml-1 sm:ml-2 flex items-center gap-1 text-xs">
+        <a href="/lang?set=en" hx-get="/lang?set=en" hx-target="body" hx-replace-url="true"
+           class={ "px-1.5 py-0.5 rounded transition-colors", langClass(current == "en") }>EN</a>
+        <span class="text-muted-foreground/50">|</span>
+        <a href="/lang?set=de" hx-get="/lang?set=de" hx-target="body" hx-replace-url="true"
+           class={ "px-1.5 py-0.5 rounded transition-colors", langClass(current == "de") }>DE</a>
+    </div>
 }

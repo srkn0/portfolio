@@ -4,11 +4,79 @@ import (
 	"context"
 
 	i18npkg "github.com/srkn0/main/pkg/i18n"
+	"github.com/srkn0/main/pkg/templui/button"
+	"github.com/srkn0/main/pkg/templui/form"
+	"github.com/srkn0/main/pkg/templui/input"
+	"github.com/srkn0/main/pkg/templui/textarea"
 )
 
 templ Contact(ctx context.Context) {
     <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-6">{ i18npkg.T(ctx, "contact_title") }</h1>
-        <p>{ i18npkg.T(ctx, "contact_desc") }</p>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-2">{ i18npkg.T(ctx, "contact_title") }</h1>
+        <p class="text-muted-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "contact_desc") }</p>
+
+        <form class="space-y-6" onsubmit="return false;">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                @form.Item() {
+                    @form.Label(form.LabelProps{For: "contact-name"}) {
+                        { i18npkg.T(ctx, "contact_name") }
+                    }
+                    @input.Input(input.Props{
+                        ID:          "contact-name",
+                        Name:        "name",
+                        Type:        input.TypeText,
+                        Placeholder: i18npkg.T(ctx, "contact_name_placeholder"),
+                        Required:    true,
+                    })
+                }
+                @form.Item() {
+                    @form.Label(form.LabelProps{For: "contact-email"}) {
+                        { i18npkg.T(ctx, "contact_email") }
+                    }
+                    @input.Input(input.Props{
+                        ID:          "contact-email",
+                        Name:        "email",
+                        Type:        input.TypeEmail,
+                        Placeholder: i18npkg.T(ctx, "contact_email_placeholder"),
+                        Required:    true,
+                    })
+                }
+            </div>
+
+            @form.Item() {
+                @form.Label(form.LabelProps{For: "contact-subject"}) {
+                    { i18npkg.T(ctx, "contact_subject") }
+                }
+                @input.Input(input.Props{
+                    ID:          "contact-subject",
+                    Name:        "subject",
+                    Type:        input.TypeText,
+                    Placeholder: i18npkg.T(ctx, "contact_subject_placeholder"),
+                    Required:    true,
+                })
+            }
+
+            @form.Item() {
+                @form.Label(form.LabelProps{For: "contact-message"}) {
+                    { i18npkg.T(ctx, "contact_message") }
+                }
+                @textarea.Textarea(textarea.Props{
+                    ID:          "contact-message",
+                    Name:        "message",
+                    Placeholder: i18npkg.T(ctx, "contact_message_placeholder"),
+                    Rows:        6,
+                    AutoResize:  true,
+                })
+            }
+
+            @button.Button(button.Props{
+                Type:      button.TypeSubmit,
+                Variant:   button.VariantDefault,
+                FullWidth: true,
+                Size:      button.SizeLg,
+            }) {
+                { i18npkg.T(ctx, "contact_send") }
+            }
+        </form>
     </section>
 }
