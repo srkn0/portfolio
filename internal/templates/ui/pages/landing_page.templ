@@ -3,9 +3,12 @@ package pages
 import (
 	"context"
 
+	"github.com/srkn0/main/internal/content"
 	"github.com/srkn0/main/internal/templates/ui/components"
 )
 
-templ LandingPage(ctx context.Context) {
+templ LandingPage(ctx context.Context, posts []content.PostSummary, projects []content.ProjectSummary) {
 	@components.Hero(ctx)
+	@components.LatestProjects(ctx, projects)
+	@components.LatestPosts(ctx, posts)
 }

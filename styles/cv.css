@@ -1,0 +1,59 @@
+/*
+ * CV-only styles that can't be expressed as Tailwind utilities directly:
+ * - hyphens (not in Tailwind core)
+ * - the inline iconify glyphs (rendered as raw HTML inside the markdown)
+ * - @page rule and color-adjust for clean PDF export
+ *
+ * Everything else (headings, paragraphs, lists, links) is styled via
+ * Tailwind classes attached by the AST transformer in internal/content/cv.go
+ * or via Tailwind utilities on the templ wrapper.
+ */
+
+.cv {
+    hyphens: auto;
+}
+
+.cv .iconify {
+    vertical-align: -0.2em;
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+}
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    @page {
+        size: A4;
+        margin: 0;
+    }
+
+    .cv {
+        color: black;
+        font-size: 0.7rem;
+        line-height: 1.3;
+        padding: 10mm 12mm;
+    }
+
+    .cv a,
+    .cv .text-muted-foreground,
+    .cv .font-semibold {
+        color: black;
+    }
+
+    /* Markdown content uses Tailwind utility classes with absolute rem sizes.
+       In print mode the base size shrinks, so override these to em so they
+       scale relative to the surrounding text. */
+    .cv .text-sm {
+        font-size: 0.85em;
+        line-height: 1.3;
+    }
+
+    .cv .text-xs {
+        font-size: 0.75em;
+        line-height: 1.3;
+    }
+}

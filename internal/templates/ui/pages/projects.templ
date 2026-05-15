@@ -3,20 +3,55 @@ package pages
 import (
 	"context"
 
-	markdowntohtml "github.com/srkn0/main/internal/content"
+	"github.com/srkn0/main/internal/content"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
 )
 
 templ ProjectList(ctx context.Context, projects []content.ProjectSummary) {
     <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
         <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "projects_title") }</h1>
+
+        if len(projects) == 0 {
+            <p class="text-muted-foreground">{ i18npkg.T(ctx, "projects_empty") }</p>
+        }
+
         <div class="flex flex-col gap-6">
-            for _, p := range projects {
-                <a href={ "/projects/" + p.Slug } class="group block rounded-lg border border-border bg-card p-5 sm:p-6 transition-colors hover:bg-accent/50 hover:border-primary/30">
-                    <h2 class="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">{ p.Title }</h2>
-                    if p.Description != "" {
-                        <p class="text-muted-foreground text-sm leading-relaxed line-clamp-2 mt-2">{ p.Description }</p>
-                    }
+            for _, project := range projects {
+                <a href={ "/projects/" + project.Slug } class="group block rounded-lg border border-border bg-card transition-colors hover:bg-accent/50 hover:border-primary/30 overflow-hidden">
+                    <div class="flex flex-col sm:flex-row">
+                        if project.Image != "" {
+                            <div class="sm:w-48 md:w-56 shrink-0">
+                                <img src={ project.Image } alt={ project.Title } class="w-full h-40 sm:h-full object-cover"/>
+                            </div>
+                        }
+                        <div class="flex flex-col gap-2 p-5 sm:p-6 flex-1 min-w-0">
+                            <h2 class="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">{ project.Title }</h2>
+                            if project.Description != "" {
+                                <p class="text-muted-foreground text-sm leading-relaxed line-clamp-2">{ project.Description }</p>
+                            }
+                            if len(project.Tags) > 0 {
+                                <div class="flex flex-wrap gap-1.5 mt-1">
+                                    for _, tag := range project.Tags {
+                                        <span class="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">{ tag }</span>
+                                    }
+                                </div>
+                            }
+                            <div class="flex items-center gap-3 mt-auto pt-2">
+                                if project.Repo != "" {
+                                    <span class="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                                        <span class="iconify" data-icon="tabler:brand-github"></span>
+                                        { i18npkg.T(ctx, "projects_repo") }
+                                    </span>
+                                }
+                                if project.Demo != "" {
+                                    <span class="text-xs text-muted-foreground group-hover:text-primary transition-colors flex items-center gap-1">
+                                        <span class="iconify" data-icon="radix-icons:external-link"></span>
+                                        { i18npkg.T(ctx, "projects_demo") }
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </a>
             }
         </div>
@@ -28,7 +63,31 @@ templ ProjectDetail(ctx context.Context, project content.Project) {
         <header class="mb-10">
             <a href="/projects" class="text-sm text-muted-foreground hover:text-primary transition-colors">{ i18npkg.T(ctx, "back_to_projects") }</a>
             <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-4">{ project.Title }</h1>
+            <div class="flex items-center gap-4 mt-3">
+                if len(project.Tags) > 0 {
+                    <div class="flex flex-wrap gap-2">
+                        for _, tag := range project.Tags {
+                            <span class="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">{ tag }</span>
+                        }
+                    </div>
+                }
+            </div>
+            <div class="flex items-center gap-4 mt-4">
+                if project.Repo != "" {
+                    <a href={ project.Repo } class="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:border-primary/30">
+                        <span class="iconify" data-icon="tabler:brand-github"></span>
+                        { i18npkg.T(ctx, "projects_repo") }
+                    </a>
+                }
+                if project.Demo != "" {
+                    <a href={ project.Demo } class="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:border-primary/30">
+                        <span class="iconify" data-icon="radix-icons:external-link"></span>
+                        { i18npkg.T(ctx, "projects_demo") }
+                    </a>
+                }
+            </div>
         </header>
+
         <div class="prose prose-neutral dark:prose-invert max-w-none">
             @templ.Raw(project.HTMLContent)
         </div>

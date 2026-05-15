@@ -1,0 +1,95 @@
+package components
+
+import (
+	"context"
+
+	"github.com/srkn0/main/internal/content"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+	"github.com/srkn0/main/pkg/templui/card"
+	"github.com/srkn0/main/pkg/templui/carousel"
+)
+
+func chunkPosts(posts []content.PostSummary, size int) [][]content.PostSummary {
+	if len(posts) == 0 {
+		return nil
+	}
+	var chunks [][]content.PostSummary
+	for size < len(posts) {
+		posts, chunks = posts[size:], append(chunks, posts[0:size:size])
+	}
+	chunks = append(chunks, posts)
+	return chunks
+}
+
+templ postCard(ctx context.Context, post content.PostSummary) {
+	<a href={ "/blog/" + post.Slug } class="block h-full">
+		@card.Card(card.Props{
+			Class: "h-full transition-shadow duration-300 hover:shadow-md",
+		}) {
+			@card.Header() {
+				@card.Title() {
+					{ post.Title }
+				}
+				@card.Description() {
+					{ post.Description }
+				}
+			}
+			@card.Content() {
+				<div class="flex flex-col gap-3">
+					<time class="text-xs text-muted-foreground">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
+					<div class="flex flex-wrap gap-1.5">
+						for _, tag := range post.Tags {
+							<span class="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">{ tag }</span>
+						}
+					</div>
+				</div>
+			}
+		}
+	</a>
+}
+
+templ LatestPosts(ctx context.Context, posts []content.PostSummary) {
+	if len(posts) == 0 {
+		return
+	}
+	<section class="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
+		<div class="flex items-center justify-between mb-8 sm:mb-10">
+			<h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">{ i18npkg.T(ctx, "latest_posts") }</h2>
+			<a href="/blog" class="text-sm font-medium text-primary hover:underline">{ i18npkg.T(ctx, "view_all") }</a>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:hidden">
+			for _, post := range posts {
+				@postCard(ctx, post)
+			}
+		</div>
+
+		<div class="hidden sm:block">
+			@carousel.Carousel(carousel.Props{
+				Loop: true,
+			}) {
+				@carousel.Content() {
+					for _, chunk := range chunkPosts(posts, 3) {
+						@carousel.Item() {
+							<div class="grid grid-cols-3 gap-4 px-4 lg:px-10 py-2">
+								for _, post := range chunk {
+									@postCard(ctx, post)
+								}
+							</div>
+						}
+					}
+				}
+				@carousel.Previous(carousel.PreviousProps{
+					Class: "bg-card/80 border border-border text-foreground shadow-sm hover:bg-accent hover:border-primary/30",
+				})
+				@carousel.Next(carousel.NextProps{
+					Class: "bg-card/80 border border-border text-foreground shadow-sm hover:bg-accent hover:border-primary/30",
+				})
+				@carousel.Indicators(carousel.IndicatorsProps{
+					Count: len(chunkPosts(posts, 3)),
+				})
+			}
+			@carousel.Script()
+		</div>
+	</section>
+}

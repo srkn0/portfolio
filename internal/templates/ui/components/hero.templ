@@ -1,12 +1,28 @@
 package components
 
-import "context"
+import (
+	"context"
 
-templ Hero(ctx context.Context) {
-	<section class="flex items-center justify-center min-h-[60vh] px-6">
-		<div class="text-center max-w-2xl">
-			<h1 class="text-4xl md:text-5xl font-extrabold">Hi, I'm Serkan</h1>
-			<p class="mt-4 text-slate-600">Notes and projects.</p>
-		</div>
-	</section>
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+)
+
+templ Hero(ctx context.Context){
+    <section class="flex items-center justify-center min-h-[calc(100vh-4rem)] sm:min-h-[calc(100vh-5rem)] px-4 sm:px-6 pt-8 sm:pt-16 pb-8">
+        <div class="flex flex-col items-center gap-6 sm:gap-10 max-w-3xl text-center">
+            <div class="relative rounded-full p-1 bg-gradient-to-br from-primary via-ring to-[oklch(70%_0.18_270)] shadow-[0_0_0_1px_oklch(54.6%_0.245_262.881/0.15),0_8px_32px_oklch(54.6%_0.245_262.881/0.12),0_2px_8px_oklch(0_0_0/0.08)] transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] hover:scale-[1.03] hover:shadow-[0_0_0_1px_oklch(54.6%_0.245_262.881/0.2),0_16px_48px_oklch(54.6%_0.245_262.881/0.18),0_4px_12px_oklch(0_0_0/0.1)]">
+                <img id="hero-image" src="https://t4.ftcdn.net/jpg/03/64/21/11/360_F_364211147_1qgLVxv1Tcq0Ohz3FawUfrtONzz8nq3e.jpg" alt="Photo of me" class="block w-56 h-56 md:w-72 md:h-72 rounded-full object-cover border-4 border-background cursor-pointer">
+            </div>
+
+            <div class="flex flex-col gap-3">
+                <p class="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight text-foreground">
+                    { i18npkg.T(ctx, "hero_greeting") } <span class="text-primary relative after:absolute after:bottom-[0.05em] after:left-0 after:w-full after:h-[0.12em] after:bg-primary/25 after:rounded-sm">Serkan</span>.
+                </p>
+                <p class="text-lg md:text-xl leading-relaxed text-muted-foreground max-w-lg mx-auto">
+                    { i18npkg.T(ctx, "hero_subtitle") } if i18npkg.GetLocale(ctx) != "de" {
+                        <span class="text-[oklch(0.637_0.237_25.331)] inline-block animate-heartbeat">&hearts;</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </section>
 }
