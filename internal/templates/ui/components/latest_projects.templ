@@ -1,0 +1,99 @@
+package components
+
+import (
+	"context"
+
+	"github.com/srkn0/main/internal/content"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+	"github.com/srkn0/main/pkg/templui/card"
+	"github.com/srkn0/main/pkg/templui/carousel"
+)
+
+func chunkProjects(projects []content.ProjectSummary, size int) [][]content.ProjectSummary {
+	if len(projects) == 0 {
+		return nil
+	}
+	var chunks [][]content.ProjectSummary
+	for size < len(projects) {
+		projects, chunks = projects[size:], append(chunks, projects[0:size:size])
+	}
+	chunks = append(chunks, projects)
+	return chunks
+}
+
+templ projectCarouselCard(ctx context.Context, project content.ProjectSummary) {
+	<a href={ "/projects/" + project.Slug } class="block h-full">
+		@card.Card(card.Props{
+			Class: "h-full transition-all duration-300 hover:shadow-md hover:border-primary/30",
+		}) {
+			if project.Image != "" {
+				@card.Content() {
+					<div class="-m-6 mb-0">
+						<img src={ project.Image } alt={ project.Title } class="w-full h-32 object-cover rounded-t-lg"/>
+					</div>
+				}
+			}
+			@card.Header() {
+				@card.Title() {
+					{ project.Title }
+				}
+				@card.Description() {
+					{ project.Description }
+				}
+			}
+			@card.Content() {
+				<div class="flex flex-wrap gap-1.5">
+					for _, tag := range project.Tags {
+						<span class="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">{ tag }</span>
+					}
+				</div>
+			}
+		}
+	</a>
+}
+
+templ LatestProjects(ctx context.Context, projects []content.ProjectSummary) {
+	if len(projects) == 0 {
+		return
+	}
+	<section class="px-4 sm:px-6 py-16 sm:py-20 max-w-5xl mx-auto">
+		<div class="flex items-center justify-between mb-8 sm:mb-10">
+			<h2 class="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-foreground">{ i18npkg.T(ctx, "latest_projects") }</h2>
+			<a href="/projects" class="text-sm font-medium text-primary hover:underline">{ i18npkg.T(ctx, "view_all_projects") }</a>
+		</div>
+
+		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:hidden">
+			for _, project := range projects {
+				@projectCarouselCard(ctx, project)
+			}
+		</div>
+
+		<div class="hidden sm:block">
+			@carousel.Carousel(carousel.Props{
+				Loop: true,
+			}) {
+				@carousel.Content() {
+					for _, chunk := range chunkProjects(projects, 3) {
+						@carousel.Item() {
+							<div class="grid grid-cols-3 gap-4 px-4 lg:px-10 py-2">
+								for _, project := range chunk {
+									@projectCarouselCard(ctx, project)
+								}
+							</div>
+						}
+					}
+				}
+				@carousel.Previous(carousel.PreviousProps{
+					Class: "bg-card/80 border border-border text-foreground shadow-sm hover:bg-accent hover:border-primary/30",
+				})
+				@carousel.Next(carousel.NextProps{
+					Class: "bg-card/80 border border-border text-foreground shadow-sm hover:bg-accent hover:border-primary/30",
+				})
+				@carousel.Indicators(carousel.IndicatorsProps{
+					Count: len(chunkProjects(projects, 3)),
+				})
+			}
+			@carousel.Script()
+		</div>
+	</section>
+}
