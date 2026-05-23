@@ -1,0 +1,23 @@
+package layouts
+
+import (
+	"context"
+
+	i18npkg "github.com/srkn0/main/pkg/i18n"
+)
+
+templ Print(ctx context.Context) {
+	<!DOCTYPE html>
+	<html lang={ i18npkg.GetLocale(ctx) }>
+		<head>
+			<title>{ i18npkg.T(ctx, "site_title") }</title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<link href="/public/css/index.css" rel="stylesheet"/>
+			<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+		</head>
+		<body>
+			{ children... }
+		</body>
+	</html>
+}
