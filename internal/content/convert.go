@@ -24,7 +24,9 @@ func convertMarkdown(src []byte) (htmlContent string, meta map[string]any, err e
 		goldmark.WithExtensions(
 			extension.GFM,
 			extension.Footnote,
-			&frontmatter.Extender{Mode: frontmatter.SetMetadata},
+			&frontmatter.Extender{
+				Mode: frontmatter.SetMetadata,
+			},
 		),
 		goldmark.WithParserOptions(
 			parser.WithAutoHeadingID(),
@@ -36,19 +38,23 @@ func convertMarkdown(src []byte) (htmlContent string, meta map[string]any, err e
 			html.WithUnsafe(),
 		),
 	)
+
 	root := md.Parser().Parse(text.NewReader(src))
 	doc := root.OwnerDocument()
 	meta = doc.Meta()
+
 	var buf bytes.Buffer
 	if err := md.Renderer().Render(&buf, src, root); err != nil {
 		return "", nil, err
 	}
+
 	return buf.String(), meta, nil
 }
 
 func parseMeta(meta map[string]any) (title, description string, tags []string, date time.Time, err error) {
 	title, _ = meta["title"].(string)
 	description, _ = meta["description"].(string)
+
 	if rawTags, ok := meta["tags"].([]any); ok {
 		for _, t := range rawTags {
 			if s, ok := t.(string); ok {
@@ -56,6 +62,7 @@ func parseMeta(meta map[string]any) (title, description string, tags []string, d
 			}
 		}
 	}
+
 	if rawDate, ok := meta["date"].(time.Time); ok {
 		date = rawDate
 	} else if rawDateStr, ok := meta["date"].(string); ok {
@@ -64,5 +71,6 @@ func parseMeta(meta map[string]any) (title, description string, tags []string, d
 			return "", "", nil, time.Time{}, fmt.Errorf("invalid date format %q: %w", rawDateStr, err)
 		}
 	}
+
 	return title, description, tags, date, nil
 }
