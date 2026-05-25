@@ -25,18 +25,13 @@ jobs:
           node-version: "20"
           cache: npm
 
-      - uses: arduino/setup-task@v2
-        with:
-          version: 3.x
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
       - run: npm install
 
       - run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
 
-      - run: task templ
+      - run: templ generate
 
-      - run: task tailwind
+      - run: npx @tailwindcss/cli -i app.css -o ./public/css/index.css
 
       - uses: ko-build/setup-ko@v0.7
 
