@@ -1,12 +1,11 @@
 [tools]
 go = "1.26.2"
 "go:github.com/air-verse/air" = "latest"
-"go:github.com/a-h/templ/cmd/templ" = "latest"
 "aqua:ko-build/ko" = "latest"
 
 [tasks.templ]
 description = "Generate Go code from .templ files"
-run = "templ generate"
+run = "go tool templ generate"
 
 [tasks.tailwind]
 description = "Compile Tailwind CSS"
