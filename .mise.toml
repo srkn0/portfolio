@@ -1,6 +1,21 @@
 [tools]
 go = "1.26.2"
 "go:github.com/air-verse/air" = "latest"
-"go:github.com/a-h/templ/cmd/templ"   = "latest"
-"aqua:go-task/task" = "latest"
+"go:github.com/a-h/templ/cmd/templ" = "latest"
 "aqua:ko-build/ko" = "latest"
+
+[tasks.templ]
+description = "Generate Go code from .templ files"
+run = "templ generate"
+
+[tasks.tailwind]
+description = "Compile Tailwind CSS"
+run = "npx @tailwindcss/cli -i app.css -o ./public/css/index.css"
+
+[tasks.gen]
+description = "Run all code generators"
+depends = ["templ", "tailwind"]
+
+[tasks.dev]
+description = "Run dev server with hot reload"
+run = "air"
