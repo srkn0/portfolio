@@ -1,2 +1,8 @@
-tmp
-node_modules
+tmp/
+node_modules/
+
+# templ-generated files: regenerated via `task templ` (locally and in CI)
+*_templ.go
+
+# tailwind output: regenerated via `task tailwind` (locally and in CI)
+public/css/index.css

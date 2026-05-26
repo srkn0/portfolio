@@ -1,0 +1,54 @@
+name: build
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - uses: arduino/setup-task@v2
+        with:
+          version: 3.x
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: npm install
+
+      - run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+
+      - run: task templ
+
+      - run: task tailwind
+
+      - uses: ko-build/setup-ko@v0.7
+
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | ko login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and push image
+        env:
+          KO_DOCKER_REPO: ghcr.io/srkn0/portfolio
+        run: |
+          ko build --bare \
+            --tags=${{ github.ref_name }} \
+            --tags=${{ github.sha }} \
+            --tags=latest \
+            .
