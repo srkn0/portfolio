@@ -25,8 +25,8 @@ pre_cmd = [
     "rm -f ./tmp/main",
     "find ./internal/templates -name '*_templ.go' -delete",
     "clear",
-    "task templ",
-    "task tailwind",
+    "templ generate",
+    "npx @tailwindcss/cli -i app.css -o ./public/css/index.css",
 ]
 rerun = false
 rerun_delay = 100
