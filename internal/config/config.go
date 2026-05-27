@@ -12,6 +12,7 @@ var ErrMissingEnv = errors.New("missing required environment variable")
 type Config struct {
 	Port int
 	SMTP SMTPConfig
+	Obs  ObsConfig
 }
 
 type SMTPConfig struct {
@@ -21,6 +22,12 @@ type SMTPConfig struct {
 	Password string
 	From     string
 	To       string
+}
+
+type ObsConfig struct {
+	ServiceName  string // OTEL_SERVICE_NAME, default "portfolio"
+	OTLPEndpoint string // OTEL_EXPORTER_OTLP_ENDPOINT, default "" (disables OTLP export)
+	LogLevel     string // LOG_LEVEL, default "info"
 }
 
 type envSpec struct {
@@ -50,6 +57,9 @@ func Load() (Config, error) {
 
 	if err := loadSpecs([]envSpec{
 		{key: "PORT", target: &portStr, fallback: "8080"},
+		{key: "OTEL_SERVICE_NAME", target: &cfg.Obs.ServiceName, fallback: "portfolio"},
+		{key: "OTEL_EXPORTER_OTLP_ENDPOINT", target: &cfg.Obs.OTLPEndpoint, fallback: ""},
+		{key: "LOG_LEVEL", target: &cfg.Obs.LogLevel, fallback: "info"},
 	}); err != nil {
 		return Config{}, err
 	}

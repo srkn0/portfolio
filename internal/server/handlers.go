@@ -3,7 +3,7 @@ package server
 import (
 	"errors"
 	"fmt"
-	"log"
+	"log/slog"
 	"net/http"
 	"strconv"
 
@@ -12,6 +12,7 @@ import (
 
 	"github.com/srkn0/main/internal/contact"
 	"github.com/srkn0/main/internal/content"
+	"github.com/srkn0/main/internal/o11y"
 	"github.com/srkn0/main/internal/templates/templatetargets"
 	"github.com/srkn0/main/internal/templates/ui/pages"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
@@ -25,6 +26,7 @@ type handlers struct {
 	projects   *content.ProjectStore
 	cv         *content.CVStore
 	contactSvc *contact.Service
+	logger     *slog.Logger
 }
 
 func (h *handlers) landing(w http.ResponseWriter, r *http.Request) {
@@ -106,13 +108,23 @@ func (h *handlers) contactSubmit(w http.ResponseWriter, r *http.Request) {
 	}
 	if err := h.contactSvc.Send(ctx, form); err != nil {
 		if errors.Is(err, contact.ErrInvalidForm) {
+			o11y.LogEvent(ctx, h.logger, o11y.EventContactValidation,
+				slog.String("email", form.Email),
+			)
 			writeStatus(w, http.StatusBadRequest, i18npkg.T(ctx, "contact_error_validation"), true)
 			return
 		}
-		log.Printf("contact: send failed: %v", err)
+		o11y.LogEvent(ctx, h.logger, o11y.EventContactSendFailed,
+			slog.String("err", err.Error()),
+		)
 		writeStatus(w, http.StatusInternalServerError, i18npkg.T(ctx, "contact_error_send"), true)
 		return
 	}
+	o11y.LogEvent(ctx, h.logger, o11y.EventContactSubmit,
+		slog.String("name", form.Name),
+		slog.String("email", form.Email),
+		slog.String("subject", form.Subject),
+	)
 	writeStatus(w, http.StatusOK, i18npkg.T(ctx, "contact_success"), false)
 }
 
@@ -127,11 +139,17 @@ func writeStatus(w http.ResponseWriter, status int, msg string, isError bool) {
 }
 
 func (h *handlers) setLanguage(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	from := i18npkg.GetLocale(ctx)
 	lang := r.URL.Query().Get("set")
 	if !i18npkg.IsValidLang(lang) {
 		lang = "de"
 	}
 	i18npkg.SetLangCookie(w, lang)
+	o11y.LogEvent(ctx, h.logger, o11y.EventLangSwitch,
+		slog.String("from", from),
+		slog.String("to", lang),
+	)
 	w.Header().Set("HX-Redirect", r.Header.Get("HX-Current-URL"))
 	w.WriteHeader(http.StatusOK)
 }
