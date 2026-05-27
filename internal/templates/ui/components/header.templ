@@ -19,8 +19,13 @@ func langClass(active bool) string {
 templ Header(ctx context.Context) {
     <header id="app-header" class="sticky top-0 z-50 transition-all duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] px-3 sm:px-6 py-3 sm:py-4 bg-transparent">
         <div class="flex items-center justify-between max-w-[80rem] mx-auto">
-            <a href="/" class="kill-link-style" hx-get="/" hx-target="#main-content" hx-push-url="true">
-                <span class="inline-flex items-center justify-center w-11 h-11 rounded-md border-[3px] border-primary text-primary text-xl font-extrabold tracking-tight select-none transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] bg-primary/10 backdrop-blur-[8px] hover:scale-110">SK</span>
+            <a href="/" class="kill-link-style" hx-get="/" hx-target="#main-content" hx-push-url="true" aria-label="Home">
+                <span class="inline-flex items-center justify-center w-11 h-11 rounded-md border-[3px] border-primary text-primary select-none transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] bg-primary/10 backdrop-blur-[8px] hover:scale-110">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M 24 14 Q 20 14 20 18 L 20 30 Q 20 32 16 32 Q 20 32 20 34 L 20 46 Q 20 50 24 50"/>
+                        <path d="M 40 14 Q 44 14 44 18 L 44 30 Q 44 32 48 32 Q 44 32 44 34 L 44 46 Q 44 50 40 50"/>
+                    </svg>
+                </span>
             </a>
             <nav class="flex items-center gap-0.5 sm:gap-2">
                 @button.Button(button.Props{
