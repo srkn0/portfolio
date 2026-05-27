@@ -6,3 +6,8 @@ node_modules/
 
 # tailwind output: regenerated via `task tailwind` (locally and in CI)
 public/css/index.css
+
+# local env / secret files — never commit
+test.sh
+.env
+.env.local
