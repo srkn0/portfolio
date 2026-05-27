@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"net/http"
 	"os"
@@ -13,25 +14,23 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 
+	"github.com/srkn0/main/internal/contact"
 	"github.com/srkn0/main/internal/content"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
 )
 
-func Run(dataFS, publicFS fs.FS) error {
-	return RunWithConfig(dataFS, publicFS, DefaultConfig())
-}
-
-func RunWithConfig(dataFS, publicFS fs.FS, cfg Config) error {
+func Run(dataFS, publicFS fs.FS, cfg Config, contactSvc *contact.Service) error {
 	posts, projects, cv, err := loadStores(dataFS)
 	if err != nil {
 		return err
 	}
 
-	h := &handlers{posts: posts, projects: projects, cv: cv}
+	h := &handlers{posts: posts, projects: projects, cv: cv, contactSvc: contactSvc}
 	router := newRouter(h, publicFS)
 
+	addr := fmt.Sprintf(":%d", cfg.Port)
 	srv := &http.Server{
-		Addr:         cfg.Addr,
+		Addr:         addr,
 		Handler:      router,
 		ReadTimeout:  cfg.ReadTimeout,
 		WriteTimeout: cfg.WriteTimeout,
@@ -40,7 +39,7 @@ func RunWithConfig(dataFS, publicFS fs.FS, cfg Config) error {
 
 	_, _, postCount := posts.GetAll(1, 1, i18npkg.DefaultLocale)
 	projectCount := len(projects.GetAll(i18npkg.DefaultLocale))
-	printBanner(cfg.Addr, postCount, projectCount)
+	printBanner(addr, postCount, projectCount)
 
 	return runWithShutdown(srv, cfg.ShutdownTimeout)
 }
@@ -92,6 +91,7 @@ func newRouter(h *handlers, publicFS fs.FS) http.Handler {
 	r.Get("/cv", h.cvPage)
 	r.Get("/cv/print", h.cvPrint)
 	r.Get("/contact", h.contact)
+	r.Post("/contact", h.contactSubmit)
 	r.Get("/lang", h.setLanguage)
 
 	r.Handle("/public/*", publicFileServer(publicFS))

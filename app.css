@@ -26,6 +26,11 @@ html {
     }
 }
 
+/* HTMX request indicator — shown while a request is in flight, hidden otherwise */
+.htmx-indicator { display: none; }
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator { display: inline; }
+
 @layer components {
     .glass-nav-btn {
         @apply !bg-primary/[0.08] !text-primary !border !border-primary/12 !rounded-md !font-medium !text-sm !px-3.5 !py-1.5 !transition-all !duration-300 !ease-[cubic-bezier(0.4,0,0.2,1)] !backdrop-blur-[8px] !inline-flex !items-center !gap-1.5;

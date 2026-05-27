@@ -10,7 +10,7 @@ templ Print(ctx context.Context) {
 	<!DOCTYPE html>
 	<html lang={ i18npkg.GetLocale(ctx) }>
 		<head>
-			<title>{ i18npkg.T(ctx, "site_title") }</title>
+			<title>{ i18npkg.PageTitle(ctx) }</title>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link href="/public/css/index.css" rel="stylesheet"/>
