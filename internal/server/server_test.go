@@ -3,13 +3,25 @@ package server
 import (
 	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"syscall"
 	"testing"
 	"testing/fstest"
 	"time"
+
+	"github.com/prometheus/client_golang/prometheus"
+
+	"github.com/srkn0/main/internal/o11y"
 )
+
+func testDeps() Deps {
+	return Deps{
+		Logger:   slog.New(slog.NewJSONHandler(io.Discard, nil)),
+		Recorder: o11y.NewRecorder(prometheus.NewRegistry()),
+	}
+}
 
 // fullDataFS builds a complete data FS with posts/, projects/ and cv/
 // so loadStores succeeds end-to-end.
@@ -76,7 +88,7 @@ func TestPublicFileServer_servesAndSetsCacheControl(t *testing.T) {
 
 func TestNewRouter_rootRoutes(t *testing.T) {
 	h := newTestHandlers(t)
-	router := newRouter(h, publicFS())
+	router := newRouter(h, publicFS(), testDeps(), func() error { return nil })
 
 	for _, path := range []string{"/", "/blog", "/projects", "/cv", "/cv/print", "/contact"} {
 		t.Run(path, func(t *testing.T) {
@@ -91,7 +103,7 @@ func TestNewRouter_rootRoutes(t *testing.T) {
 
 func TestNewRouter_unknownRouteIs404(t *testing.T) {
 	h := newTestHandlers(t)
-	router := newRouter(h, publicFS())
+	router := newRouter(h, publicFS(), testDeps(), func() error { return nil })
 
 	rec := httptest.NewRecorder()
 	router.ServeHTTP(rec, httptest.NewRequest(http.MethodGet, "/nope-doesnt-exist", nil))
@@ -111,7 +123,7 @@ func TestRunWithShutdown_returnsAfterSignal(t *testing.T) {
 
 	done := make(chan error, 1)
 	go func() {
-		done <- runWithShutdown(srv, 500*time.Millisecond)
+		done <- runWithShutdown(srv, 500*time.Millisecond, slog.New(slog.NewJSONHandler(io.Discard, nil)))
 	}()
 
 	// Give the goroutines a moment to wire signal handling and Listen().

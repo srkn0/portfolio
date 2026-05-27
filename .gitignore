@@ -11,3 +11,7 @@ public/css/index.css
 test.sh
 .env
 .env.local
+
+# local-only ephemeral dev stack and container build context
+compose/
+.dockerignore

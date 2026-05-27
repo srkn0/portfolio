@@ -2,7 +2,9 @@ package server
 
 import (
 	"context"
+	"io"
 	"io/fs"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -38,7 +40,8 @@ func newTestHandlers(t *testing.T) *handlers {
 	if err != nil {
 		t.Fatalf("LoadCV: %v", err)
 	}
-	return &handlers{posts: posts, projects: projects, cv: cv}
+	logger := slog.New(slog.NewJSONHandler(io.Discard, nil))
+	return &handlers{posts: posts, projects: projects, cv: cv, logger: logger}
 }
 
 func filesFS(files map[string]string) fs.FS {
