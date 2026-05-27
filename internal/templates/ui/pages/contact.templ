@@ -15,7 +15,12 @@ templ Contact(ctx context.Context) {
         <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-2">{ i18npkg.T(ctx, "contact_title") }</h1>
         <p class="text-muted-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "contact_desc") }</p>
 
-        <form class="space-y-6" onsubmit="return false;">
+        <form
+            class="space-y-6"
+            hx-post="/contact"
+            hx-target="#contact-status"
+            hx-swap="innerHTML"
+            hx-disabled-elt="find button[type='submit']">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 @form.Item() {
                     @form.Label(form.LabelProps{For: "contact-name"}) {
@@ -77,6 +82,11 @@ templ Contact(ctx context.Context) {
             }) {
                 { i18npkg.T(ctx, "contact_send") }
             }
+
+            <div class="mt-4 text-sm">
+                <span class="htmx-indicator text-muted-foreground">{ i18npkg.T(ctx, "contact_sending") }</span>
+                <div id="contact-status"></div>
+            </div>
         </form>
     </section>
 }

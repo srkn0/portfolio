@@ -1,5 +1,5 @@
 {
-  "site_title": "SK - Portfolio",
+  "page_home": "Home",
   "nav_blog": "Blog",
   "nav_projects": "Projects",
   "nav_cv": "CV",
@@ -31,5 +31,9 @@
   "contact_message": "Message",
   "contact_message_placeholder": "Your message...",
   "contact_send": "Send Message",
+  "contact_sending": "Sending...",
+  "contact_success": "Thanks, your message is on its way. I'll get back to you soon.",
+  "contact_error_validation": "Please fill in all fields and use a valid email address.",
+  "contact_error_send": "Something went wrong on our end. Please try again later.",
   "network_error": "Network error — please check your connection."
 }

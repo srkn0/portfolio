@@ -51,7 +51,7 @@ func filesFS(files map[string]string) fs.FS {
 
 func i18nFS() fs.FS {
 	de := `{
-		"site_title": "SK",
+		"page_home": "Home",
 		"nav_blog": "Blog",
 		"blog_title": "Blog",
 		"projects_title": "Projekte"
