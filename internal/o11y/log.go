@@ -21,10 +21,17 @@ import (
 // (HTTP scheme). The SDK appends the signal-specific path (/v1/logs,
 // /v1/traces) automatically when given just the host, so a base URL like
 // http://otel-collector:4318 routes correctly to all signals.
+//
+// The scheme is required because url.Parse("localhost:4318") treats
+// "localhost" as the scheme and leaves Host empty — silently routing to
+// nowhere. Forcing the user to include http:// or https:// avoids that.
 func parseOTLPEndpoint(raw string) (host string, insecure bool, err error) {
 	u, err := url.Parse(raw)
 	if err != nil {
 		return "", false, fmt.Errorf("parse OTLP endpoint %q: %w", raw, err)
+	}
+	if u.Scheme == "" || u.Host == "" {
+		return "", false, fmt.Errorf("OTLP endpoint %q must include scheme and host (e.g. http://collector:4318)", raw)
 	}
 	return u.Host, u.Scheme != "https", nil
 }
