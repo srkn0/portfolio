@@ -1,0 +1,22 @@
+name: test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v2
+      # Templ files are gitignored and regenerated; tests under internal/server
+      # import the rendered pages package, so we need them present.
+      - run: go tool templ generate
+      - run: go vet ./...
+      - run: go test ./... -race
