@@ -38,6 +38,10 @@ func RunWithConfig(dataFS, publicFS fs.FS, cfg Config) error {
 		IdleTimeout:  cfg.IdleTimeout,
 	}
 
+	_, _, postCount := posts.GetAll(1, 1, i18npkg.DefaultLocale)
+	projectCount := len(projects.GetAll(i18npkg.DefaultLocale))
+	printBanner(cfg.Addr, postCount, projectCount)
+
 	return runWithShutdown(srv, cfg.ShutdownTimeout)
 }
 
