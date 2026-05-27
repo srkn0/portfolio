@@ -33,7 +33,7 @@ func LoadCV(fsys fs.FS) (*CVStore, error) {
 			continue
 		}
 
-		locale := extractCVLocale(entry.Name())
+		locale := strings.TrimSuffix(entry.Name(), ".md")
 		if !isSupportedLocale(locale) {
 			continue
 		}
@@ -62,14 +62,6 @@ func (s *CVStore) Get(locale string) string {
 		return html
 	}
 	return ""
-}
-
-func extractCVLocale(filename string) string {
-	name := strings.TrimSuffix(filename, ".md")
-	if idx := strings.LastIndex(name, "."); idx > 0 {
-		return name[idx+1:]
-	}
-	return defaultLocale
 }
 
 func convertCV(src []byte) (string, error) {
