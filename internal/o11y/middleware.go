@@ -32,20 +32,13 @@ func RequestLog(logger *slog.Logger) func(http.Handler) http.Handler {
 				slog.Int64("duration_ms", time.Since(start).Milliseconds()),
 				slog.String("request_id", middleware.GetReqID(r.Context())),
 				slog.String("trace_id", traceIDFrom(r.Context())),
-				slog.String("remote_ip", clientIP(r)),
+				// chi's middleware.RealIP has already resolved X-Forwarded-For /
+				// X-Real-IP into r.RemoteAddr, so reading it directly is correct
+				// and saves us re-parsing the headers.
+				slog.String("remote_ip", r.RemoteAddr),
 				slog.String("user_agent", r.UserAgent()),
 				slog.String("referer", r.Referer()),
 			)
 		})
 	}
-}
-
-func clientIP(r *http.Request) string {
-	if v := r.Header.Get("X-Forwarded-For"); v != "" {
-		return v
-	}
-	if v := r.Header.Get("X-Real-IP"); v != "" {
-		return v
-	}
-	return r.RemoteAddr
 }
