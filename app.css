@@ -11,6 +11,13 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Tailwind Typography wraps inline code in literal backtick characters via
+   ::before/::after. Drop them so code spans render without the backticks. */
+.prose code::before,
+.prose code::after {
+    content: none;
+}
+
 @layer base {
     * {
         @apply border-border font-[barlow];
