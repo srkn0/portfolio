@@ -18,7 +18,7 @@
 <div class="mb-1">
 
 **System Engineer**<br>
-<span class="text-sm text-muted-foreground">*x GmbH* · Remote · <span class="font-semibold text-foreground">Jun 2024 – Jetzt</span></span>
+<span class="text-sm text-muted-foreground">*x GmbH* · Remote · <span class="font-semibold text-foreground">Juli 2024 – Juli 2026</span></span>
 
 </div>
 
@@ -37,7 +37,7 @@
 <div class="mb-1">
 
 **Fachinformatiker für Systemintegration**<br>
-<span class="text-sm text-muted-foreground">*x* · x, DE · <span class="font-semibold text-foreground">Aug 2022 – Jun 2024</span></span>
+<span class="text-sm text-muted-foreground">*x* · x, DE · <span class="font-semibold text-foreground">Aug 2022 – Juli 2024</span></span>
 
 </div>
 
