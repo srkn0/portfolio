@@ -50,3 +50,15 @@ jobs:
             --tags=${{ github.sha }} \
             --tags=latest \
             .
+
+      - name: Trigger deploy
+        env:
+          SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
+          HOST: ${{ vars.DEPLOY_HOST }}
+        run: |
+          BODY="{\"ref\":\"${{ github.ref_name }}\"}"
+          SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | sed 's/^.* //')
+          curl -fsS -X POST "https://$HOST/__deploy/hooks/deploy-portfolio" \
+            -H "Content-Type: application/json" \
+            -H "X-Hub-Signature-256: sha256=$SIG" \
+            -d "$BODY"
