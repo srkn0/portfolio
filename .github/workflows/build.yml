@@ -54,7 +54,7 @@ jobs:
       - name: Trigger deploy
         env:
           SECRET: ${{ secrets.DEPLOY_WEBHOOK_SECRET }}
-          HOST: ${{ vars.DEPLOY_HOST }}
+          HOST: ${{ secrets.DEPLOY_HOST }}
         run: |
           BODY="{\"ref\":\"${{ github.ref_name }}\"}"
           SIG=$(printf '%s' "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | sed 's/^.* //')
