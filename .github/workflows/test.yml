@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: jdx/mise-action@v2
+      - uses: jdx/mise-action@v4
       # Templ files are gitignored and regenerated; tests under internal/server
       # import the rendered pages package, so we need them present.
       - run: go tool templ generate
