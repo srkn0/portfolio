@@ -1,6 +1,6 @@
 ---
-title: "Bootstrap-Repo für meine Workstation"
-description: "Ansible-Bootstrap für eine Linux/WSL2-Workstation. Ansible verwaltet die OS-Ebene, mise alle CLI-Tools und Language-Runtimes; unter WSL wird der Nerd Font auf dem Windows-Host installiert."
+title: "Ansible Bootstrap für meine Workstation"
+description: "Älteres, weiterhin koexistierendes Ansible-Bootstrap für eine Linux/WSL2-Workstation. Ansible verwaltet die OS-Ebene, mise alle CLI-Tools und Language-Runtimes; unter WSL wird der Nerd Font auf dem Windows-Host installiert."
 tags: [ansible, mise, wsl, dotfiles, neovim, zsh, molecule]
 date: 2026-05-30
 repo: https://github.com/srkn0/bootstrap-workstation
@@ -8,7 +8,7 @@ repo: https://github.com/srkn0/bootstrap-workstation
 
 ## Überblick
 
-Ein Befehl macht aus einer frischen Maschine mein Arbeits-Setup. Das Design teilt die Zuständigkeit danach auf, was ein Tool braucht: alles, was Root benötigt oder ein System-Package ist, läuft über Ansible, alles im User-Space und versionsgepinnt über mise. Das Repo reproduziert einen bekannten Maschinen-Zustand, statt Installationen ad hoc zu skripten.
+Ein Befehl macht aus einer frischen Maschine mein Arbeits-Setup. Das Repo ist der Vorgänger meines NixOS-Setups und läuft aktuell noch koexistent, vor allem für WSL2- und klassische Linux-Umgebungen. Das Design teilt die Zuständigkeit danach auf, was ein Tool braucht: alles, was Root benötigt oder ein System-Package ist, läuft über Ansible, alles im User-Space und versionsgepinnt über mise. Das Repo reproduziert einen bekannten Maschinen-Zustand, statt Installationen ad hoc zu skripten.
 
 ## Credits
 

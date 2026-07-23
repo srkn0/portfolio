@@ -1,15 +1,12 @@
 ---
 ---
 
-# x
+# Serkan Köse
 
 <div class="leading-loose mb-4">
 
 <span class="iconify" data-icon="radix-icons:external-link"></span> [srkn.me](https://srkn.me/)<br>
 <span class="iconify" data-icon="tabler:brand-github"></span> [github.com/srkn0](https://github.com/srkn0)<br>
-<span class="iconify" data-icon="tabler:phone"></span> (+49) x<br>
-<span class="iconify" data-icon="ic:outline-location-on"></span> x<br>
-<span class="iconify" data-icon="tabler:mail"></span> [x](x)
 
 </div>
 
@@ -18,7 +15,7 @@
 <div class="mb-1">
 
 **System Engineer**<br>
-<span class="text-sm text-muted-foreground">*x GmbH* · Remote · <span class="font-semibold text-foreground">Juli 2024 – Juli 2026</span></span>
+<span class="text-sm text-muted-foreground">*Reddoxx GmbH* · Remote · <span class="font-semibold text-foreground">Juli 2024 – Juli 2026</span></span>
 
 </div>
 
@@ -28,7 +25,7 @@
 <li>Deployment, Upgrade und Migration von Applikationen und Datenbanken, inkl. Betreuung der Hauptanwendungen der Firma</li>
 <li>Entwicklung eines Kubernetes-Operators (OperatorSDK) zur Automatisierung von Backup/Restore-Prozessen</li>
 <li>Pipeline-Automatisierung mit GitLab CI für Container-Image-Builds und Deployments</li>
-<li>Verantwortung für Observability-Stack (Prometheus, Grafana, Loki, Tempo, OpenTelemetry), <br>Erstellung von Custom Prometheus Exportern (Python) zur Erweiterung des Monitorings</li>
+<li>Verantwortung für Observability-Stack (Prometheus, Grafana, Loki, Tempo, OpenTelemetry), <br>Erstellung und Anpassung von Custom Prometheus Exportern zur Erweiterung des Monitorings</li>
 <li>Infrastruktur-Automatisierung mit Ansible und Bash</li>
 </ul>
 
@@ -37,7 +34,7 @@
 <div class="mb-1">
 
 **Fachinformatiker für Systemintegration**<br>
-<span class="text-sm text-muted-foreground">*x* · x, DE · <span class="font-semibold text-foreground">Aug 2022 – Juli 2024</span></span>
+<span class="text-sm text-muted-foreground">*Stadtverwaltung Neuwied* · Neuwied, DE · <span class="font-semibold text-foreground">Aug 2022 – Juli 2024</span></span>
 
 </div>
 
@@ -55,7 +52,7 @@
 <div class="mb-1">
 
 **Schulischer Teil der Ausbildung zum Fachinformatiker Systemintegration**<br>
-<span class="text-sm text-muted-foreground">*x* · x, DE · <span class="font-semibold text-foreground">Aug 2022 – Mai 2024</span></span>
+<span class="text-sm text-muted-foreground">*David-Roentgen Schule* · Neuwied, DE · <span class="font-semibold text-foreground">Aug 2022 – Mai 2024</span></span>
 
 </div>
 
@@ -66,7 +63,7 @@
 <div class="mb-1">
 
 **Fachhochschulreife – Fachrichtung Wirtschaft**<br>
-<span class="text-sm text-muted-foreground">*x* · x, DE · <span class="font-semibold text-foreground">Aug 2020 – Jun 2022</span></span>
+<span class="text-sm text-muted-foreground">*August-Horch Schule* · Andernach, DE · <span class="font-semibold text-foreground">Aug 2020 – Jun 2022</span></span>
 
 </div>
 
@@ -78,22 +75,17 @@
 
 <div>
 <strong class="text-xs uppercase tracking-wide text-muted-foreground">Operations</strong>
-<p class="mt-0.5"><span class="iconify" data-icon="logos:kubernetes"></span> Kubernetes, <span class="iconify" data-icon="simple-icons:flux"></span> FluxCD, Kustomize, <span class="iconify" data-icon="logos:helm"></span> Helm,<br> <span class="iconify" data-icon="logos:ansible"></span> Ansible <span class="iconify" data-icon="material-icon-theme:gitlab"></span> GitLab CI, <span class="iconify" data-icon="logos:docker-icon"></span> Docker, <span class="iconify" data-icon="simple-icons:proxmox"></span> Proxmox</p>
+<p class="mt-0.5"><span class="iconify" data-icon="logos:kubernetes"></span> Kubernetes | <span class="iconify" data-icon="simple-icons:flux"></span> FluxCD | <span class="whitespace-nowrap"><img src="/public/img/icons/kustomize.png" alt="" class="cv-skill-icon"> Kustomize</span> <br><span class="iconify" data-icon="logos:helm"></span> Helm | <span class="iconify" data-icon="logos:ansible"></span> Ansible | <span class="iconify" data-icon="simple-icons:gnubash"></span> Bash <br><span class="iconify" data-icon="material-icon-theme:gitlab"></span> GitLab CI | <span class="iconify" data-icon="logos:docker-icon"></span> Docker | <span class="iconify" data-icon="simple-icons:proxmox"></span> Proxmox</p>
 </div>
 
 <div>
 <strong class="text-xs uppercase tracking-wide text-muted-foreground">Observability</strong>
-<p class="mt-0.5"><span class="iconify" data-icon="logos:prometheus"></span> Prometheus, <span class="iconify" data-icon="logos:grafana"></span> Grafana/Loki/Tempo, <br><span class="iconify" data-icon="devicon:opentelemetry"></span> OpenTelemetry</p>
-</div>
-
-<div>
-<strong class="text-xs uppercase tracking-wide text-muted-foreground">Entwicklung</strong>
-<p class="mt-0.5"><span class="iconify" data-icon="logos:go"></span> Golang, <span class="iconify" data-icon="simple-icons:gnubash"></span> Bash
+<p class="mt-0.5"><span class="iconify" data-icon="logos:prometheus"></span> Prometheus <br><span class="iconify" data-icon="logos:grafana"></span> Grafana | Loki | Tempo <br><span class="iconify" data-icon="devicon:opentelemetry"></span> OpenTelemetry</p>
 </div>
 
 <div>
 <strong class="text-xs uppercase tracking-wide text-muted-foreground">Sprachen</strong>
-<p class="mt-0.5">Deutsch (Muttersprache), Englisch (fließend), Türkisch (Muttersprache)</p>
+<p class="mt-0.5">Deutsch (Muttersprache) <br> Englisch (fließend) <br> Türkisch (Muttersprache)</p>
 </div>
 
 </div>

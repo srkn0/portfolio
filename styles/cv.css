@@ -20,6 +20,13 @@
     height: 1.1em;
 }
 
+.cv .cv-skill-icon {
+    vertical-align: -0.125em;
+    display: inline-block;
+    width: 0.95em;
+    height: 0.95em;
+}
+
 @media print {
     body {
         -webkit-print-color-adjust: exact;

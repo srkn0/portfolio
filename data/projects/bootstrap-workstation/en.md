@@ -1,6 +1,6 @@
 ---
-title: "Bootstrap repo for my workstation"
-description: "Ansible bootstrap for a Linux/WSL2 workstation. Ansible owns the OS layer, mise owns all CLI tools and language runtimes; on WSL it installs the Nerd Font onto the Windows host."
+title: "Ansible bootstrap for my workstation"
+description: "Older, still coexisting Ansible bootstrap for a Linux/WSL2 workstation. Ansible owns the OS layer, mise owns all CLI tools and language runtimes; on WSL it installs the Nerd Font onto the Windows host."
 tags: [ansible, mise, wsl, dotfiles, neovim, zsh, molecule]
 date: 2026-05-30
 repo: https://github.com/srkn0/bootstrap-workstation
@@ -8,7 +8,7 @@ repo: https://github.com/srkn0/bootstrap-workstation
 
 ## Overview
 
-One command turns a fresh machine into my working setup. The design splits ownership by what a tool needs: anything requiring root or that is a system package goes through Ansible, everything user-space and version-pinned goes through mise. The repo reproduces a known machine state rather than scripting ad-hoc installs.
+One command turns a fresh machine into my working setup. The repo is the predecessor to my NixOS setup and currently still coexists with it, mainly for WSL2 and classic Linux environments. The design splits ownership by what a tool needs: anything requiring root or that is a system package goes through Ansible, everything user-space and version-pinned goes through mise. The repo reproduces a known machine state rather than scripting ad-hoc installs.
 
 ## Credits
 
