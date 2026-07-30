@@ -115,6 +115,14 @@ func (s *ProjectStore) GetAll(locale string) []ProjectSummary {
 	return summaries
 }
 
+func (s *ProjectStore) Latest(locale string, limit int) []ProjectSummary {
+	projects := s.GetAll(locale)
+	if limit <= 0 || limit >= len(projects) {
+		return projects
+	}
+	return projects[:limit]
+}
+
 func (s *ProjectStore) Get(slug, locale string) (Project, bool) {
 	locales, ok := s.byLocale[slug]
 	if !ok {

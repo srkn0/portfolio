@@ -76,8 +76,8 @@ func TestLoadPosts_skipsUnsupportedLocale(t *testing.T) {
 
 func TestLoadPosts_skipsLooseFiles(t *testing.T) {
 	store, err := content.LoadPosts(postFS(map[string]string{
-		"README.md": "loose file at root",
-		"hi/de.md":  "---\ntitle: \"Hallo\"\ndate: 2026-05-01\n---\n",
+		"README.md":    "loose file at root",
+		"hi/de.md":     "---\ntitle: \"Hallo\"\ndate: 2026-05-01\n---\n",
 		"hi/notes.txt": "ignored",
 	}))
 	if err != nil {
@@ -109,6 +109,49 @@ func TestGetAll_sortedByDateDesc(t *testing.T) {
 	}
 	if posts[0].Title != "New" || posts[1].Title != "Mid" || posts[2].Title != "Old" {
 		t.Errorf("order = %v, want [New Mid Old]", []string{posts[0].Title, posts[1].Title, posts[2].Title})
+	}
+}
+
+func TestPostStoreListLatestArchiveAndTags(t *testing.T) {
+	store, err := content.LoadPosts(postFS(map[string]string{
+		"old/de.md": "---\ntitle: \"Old\"\ndescription: \"older\"\ntags: [go]\ndate: 2025-12-31\n---\n",
+		"new/de.md": "---\ntitle: \"New\"\ndescription: \"newer\"\ntags: [go, kubernetes]\ndate: 2026-05-01\n---\n",
+		"mid/de.md": "---\ntitle: \"Mid\"\ndescription: \"middle\"\ntags: [linux]\ndate: 2026-03-01\n---\n",
+	}))
+	if err != nil {
+		t.Fatalf("LoadPosts: %v", err)
+	}
+
+	all := store.List("de")
+	if len(all) != 3 {
+		t.Fatalf("List size = %d, want 3", len(all))
+	}
+	if all[0].Title != "New" || all[1].Title != "Mid" || all[2].Title != "Old" {
+		t.Fatalf("List order = %v", []string{all[0].Title, all[1].Title, all[2].Title})
+	}
+
+	latest := store.Latest("de", 2)
+	if len(latest) != 2 || latest[0].Title != "New" || latest[1].Title != "Mid" {
+		t.Fatalf("Latest = %v", latest)
+	}
+
+	archive := store.ArchiveByYear("de")
+	if len(archive) != 2 {
+		t.Fatalf("archive years = %d, want 2", len(archive))
+	}
+	if archive[0].Year != 2026 || len(archive[0].Posts) != 2 {
+		t.Fatalf("first archive year = %+v", archive[0])
+	}
+	if archive[1].Year != 2025 || len(archive[1].Posts) != 1 {
+		t.Fatalf("second archive year = %+v", archive[1])
+	}
+
+	tags := store.TagCounts("de")
+	if len(tags) != 3 {
+		t.Fatalf("tag count size = %d, want 3", len(tags))
+	}
+	if tags[0].Name != "go" || tags[0].Count != 2 {
+		t.Fatalf("first tag = %+v, want go count 2", tags[0])
 	}
 }
 

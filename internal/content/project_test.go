@@ -30,3 +30,22 @@ func TestLoadProjects_extraFrontmatterFields(t *testing.T) {
 		t.Errorf("image = %q", p.Image)
 	}
 }
+
+func TestProjectStoreLatest(t *testing.T) {
+	store, err := content.LoadProjects(postFS(map[string]string{
+		"old/de.md": "---\ntitle: \"Old\"\ndate: 2026-01-01\n---\n",
+		"new/de.md": "---\ntitle: \"New\"\ndate: 2026-05-01\n---\n",
+		"mid/de.md": "---\ntitle: \"Mid\"\ndate: 2026-03-01\n---\n",
+	}))
+	if err != nil {
+		t.Fatalf("LoadProjects: %v", err)
+	}
+
+	projects := store.Latest("de", 2)
+	if len(projects) != 2 {
+		t.Fatalf("Latest size = %d, want 2", len(projects))
+	}
+	if projects[0].Title != "New" || projects[1].Title != "Mid" {
+		t.Fatalf("Latest order = %v", []string{projects[0].Title, projects[1].Title})
+	}
+}

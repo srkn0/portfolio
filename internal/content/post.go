@@ -16,6 +16,16 @@ type PostSummary struct {
 	Date        time.Time
 }
 
+type PostArchiveYear struct {
+	Year  int
+	Posts []PostSummary
+}
+
+type TagCount struct {
+	Name  string
+	Count int
+}
+
 type Post struct {
 	PostSummary
 	HTMLContent string
@@ -89,18 +99,7 @@ func LoadPosts(fsys fs.FS) (*PostStore, error) {
 }
 
 func (s *PostStore) GetAll(page, perPage int, locale string) ([]PostSummary, int, int) {
-	summaries := make([]PostSummary, 0, len(s.byLocale))
-	for _, locales := range s.byLocale {
-		p := pickLocale(locales, locale)
-		if p == nil {
-			continue
-		}
-		summaries = append(summaries, p.PostSummary)
-	}
-
-	sort.Slice(summaries, func(i, j int) bool {
-		return summaries[i].Date.After(summaries[j].Date)
-	})
+	summaries := s.List(locale)
 
 	totalPosts := len(summaries)
 	totalPages := 1
@@ -122,6 +121,71 @@ func (s *PostStore) GetAll(page, perPage int, locale string) ([]PostSummary, int
 	}
 
 	return summaries[start:end], totalPages, totalPosts
+}
+
+func (s *PostStore) List(locale string) []PostSummary {
+	summaries := make([]PostSummary, 0, len(s.byLocale))
+	for _, locales := range s.byLocale {
+		p := pickLocale(locales, locale)
+		if p == nil {
+			continue
+		}
+		summaries = append(summaries, p.PostSummary)
+	}
+
+	sortPostSummaries(summaries)
+
+	return summaries
+}
+
+func (s *PostStore) Latest(locale string, limit int) []PostSummary {
+	posts := s.List(locale)
+	if limit <= 0 || limit >= len(posts) {
+		return posts
+	}
+	return posts[:limit]
+}
+
+func (s *PostStore) ArchiveByYear(locale string) []PostArchiveYear {
+	posts := s.List(locale)
+	years := make([]PostArchiveYear, 0)
+	yearIndex := make(map[int]int)
+
+	for _, post := range posts {
+		year := post.Date.Year()
+		idx, ok := yearIndex[year]
+		if !ok {
+			idx = len(years)
+			yearIndex[year] = idx
+			years = append(years, PostArchiveYear{Year: year})
+		}
+		years[idx].Posts = append(years[idx].Posts, post)
+	}
+
+	return years
+}
+
+func (s *PostStore) TagCounts(locale string) []TagCount {
+	counts := make(map[string]int)
+	for _, post := range s.List(locale) {
+		for _, tag := range post.Tags {
+			counts[tag]++
+		}
+	}
+
+	tags := make([]TagCount, 0, len(counts))
+	for name, count := range counts {
+		tags = append(tags, TagCount{Name: name, Count: count})
+	}
+
+	sort.Slice(tags, func(i, j int) bool {
+		if tags[i].Count == tags[j].Count {
+			return strings.ToLower(tags[i].Name) < strings.ToLower(tags[j].Name)
+		}
+		return tags[i].Count > tags[j].Count
+	})
+
+	return tags
 }
 
 func (s *PostStore) Get(slug, locale string) (Post, bool) {
@@ -147,4 +211,13 @@ func pickLocale(locales map[string]Post, locale string) *Post {
 		return &p
 	}
 	return nil
+}
+
+func sortPostSummaries(posts []PostSummary) {
+	sort.Slice(posts, func(i, j int) bool {
+		if posts[i].Date.Equal(posts[j].Date) {
+			return strings.ToLower(posts[i].Title) < strings.ToLower(posts[j].Title)
+		}
+		return posts[i].Date.After(posts[j].Date)
+	})
 }
