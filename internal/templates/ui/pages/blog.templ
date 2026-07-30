@@ -5,73 +5,117 @@ import (
 	"fmt"
 
 	"github.com/srkn0/main/internal/content"
+	"github.com/srkn0/main/internal/templates/constants"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
 )
 
-templ BlogList(ctx context.Context, posts []content.PostSummary, currentPage int, totalPages int) {
-    <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "blog_title") }</h1>
+templ BlogList(ctx context.Context, archive []content.PostArchiveYear) {
+	<section class="space-y-8" aria-labelledby="writing-title">
+		<header class="space-y-3">
+			<h1 id="writing-title" class="text-3xl font-semibold tracking-normal text-foreground">{ i18npkg.T(ctx, "writing_title") }</h1>
+			<p class="max-w-[42rem] text-base leading-7 text-muted-foreground">{ i18npkg.T(ctx, "writing_intro") }</p>
+		</header>
 
-        if len(posts) == 0 {
-            <p class="text-muted-foreground">{ i18npkg.T(ctx, "blog_empty") }</p>
-        }
+		if len(archive) == 0 {
+			<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "writing_empty") }</p>
+		} else {
+			<div class="space-y-2">
+				<label for="writing-search" class="text-sm font-medium text-foreground">{ i18npkg.T(ctx, "writing_search_label") }</label>
+				<div class="relative">
+					<input
+						id="writing-search"
+						type="search"
+						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
+						placeholder={ i18npkg.T(ctx, "writing_search_placeholder") }
+						data-writing-search
+					/>
+				</div>
+				<div class="flex flex-wrap items-center justify-between gap-2">
+					<p
+						class="text-sm text-muted-foreground"
+						aria-live="polite"
+						data-writing-status
+						data-result-label={ i18npkg.T(ctx, "writing_result_label") }
+					></p>
+					<div
+						class="hidden items-center gap-2 rounded-md border border-border bg-secondary px-2 py-1 text-sm text-muted-foreground"
+						data-writing-active-filter
+						data-label-prefix={ i18npkg.T(ctx, "writing_filtered_by") }
+					>
+						<span data-writing-active-label></span>
+						<a href="/blog" hx-get="/blog" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true" class="text-xs">{ i18npkg.T(ctx, "writing_clear_filter") }</a>
+					</div>
+				</div>
+			</div>
 
-        <div class="flex flex-col gap-6">
-            for _, post := range posts {
-                <a href={ "/blog/" + post.Slug } class="group block rounded-lg border border-border bg-card p-6 transition-colors hover:bg-accent/50 hover:border-primary/30">
-                    <div class="flex flex-col gap-2">
-                        <div class="flex items-center justify-between gap-4">
-                            <h2 class="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">{ post.Title }</h2>
-                            <time class="text-sm text-muted-foreground whitespace-nowrap">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
-                        </div>
-                        if post.Description != "" {
-                            <p class="text-muted-foreground text-sm leading-relaxed line-clamp-2">{ post.Description }</p>
-                        }
-                        if len(post.Tags) > 0 {
-                            <div class="flex flex-wrap gap-2 mt-1">
-                                for _, tag := range post.Tags {
-                                    <span class="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">{ tag }</span>
-                                }
-                            </div>
-                        }
-                    </div>
-                </a>
-            }
-        </div>
+			<div class="space-y-10" data-writing-archive data-empty-text={ i18npkg.T(ctx, "writing_empty_filtered") }>
+				for _, year := range archive {
+					<section class="space-y-3" data-writing-year>
+						<div class="flex items-baseline justify-between gap-4 border-b border-border pb-2">
+							<h2 class="text-xl font-semibold text-foreground">{ fmt.Sprint(year.Year) }</h2>
+							<p class="text-sm text-muted-foreground">{ YearCount(ctx, len(year.Posts)) }</p>
+						</div>
+						<div class="divide-y divide-border">
+							for _, post := range year.Posts {
+								@ArchiveRow(ctx, post)
+							}
+						</div>
+					</section>
+				}
+			</div>
+		}
+	</section>
+}
 
-        if totalPages > 1 {
-            <nav class="flex items-center justify-center gap-4 mt-12">
-                if currentPage > 1 {
-                    <a href={ "/blog?page=" + fmt.Sprint(currentPage - 1) } class="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:border-primary/30">{ i18npkg.T(ctx, "blog_previous") }</a>
-                }
-                <span class="text-sm text-muted-foreground">{ fmt.Sprint(currentPage) } / { fmt.Sprint(totalPages) }</span>
-                if currentPage < totalPages {
-                    <a href={ "/blog?page=" + fmt.Sprint(currentPage + 1) } class="rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:border-primary/30">{ i18npkg.T(ctx, "blog_next") }</a>
-                }
-            </nav>
-        }
-    </section>
+templ ArchiveRow(ctx context.Context, post content.PostSummary) {
+	<article
+		class="archive-row"
+		data-writing-item
+		data-title={ post.Title }
+		data-description={ post.Description }
+		data-tags={ TagsText(post.Tags) }
+		data-year={ post.Date.Format("2006") }
+	>
+		<time datetime={ post.Date.Format("2006-01-02") } class="archive-date">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
+		<div class="min-w-0 space-y-1">
+			<h3 class="text-base font-semibold leading-snug text-foreground">
+				<a href={ "/blog/" + post.Slug } hx-get={ "/blog/" + post.Slug } hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true">{ post.Title }</a>
+			</h3>
+			if post.Description != "" {
+				<p class="text-sm leading-6 text-muted-foreground">{ post.Description }</p>
+			}
+			if len(post.Tags) > 0 {
+				@TagList(post.Tags)
+			}
+		</div>
+	</article>
 }
 
 templ BlogPost(ctx context.Context, post content.Post) {
-    <article class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
-        <header class="mb-10">
-            <a href="/blog" class="text-sm text-muted-foreground hover:text-primary transition-colors">{ i18npkg.T(ctx, "back_to_blog") }</a>
-            <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mt-4">{ post.Title }</h1>
-            <div class="flex items-center gap-4 mt-3">
-                <time class="text-sm text-muted-foreground">{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
-                if len(post.Tags) > 0 {
-                    <div class="flex flex-wrap gap-2">
-                        for _, tag := range post.Tags {
-                            <span class="inline-block rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary">{ tag }</span>
-                        }
-                    </div>
-                }
-            </div>
-        </header>
+	<article class="article-shell">
+		<header class="mb-9 space-y-4">
+			@DetailBackLink("/blog", i18npkg.T(ctx, "back_to_blog"))
+			<div class="space-y-3">
+				<h1 class="text-3xl font-semibold tracking-normal text-foreground">{ post.Title }</h1>
+				<div class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+					<time datetime={ post.Date.Format("2006-01-02") }>{ post.Date.Format(i18npkg.DateFormat(ctx)) }</time>
+					if len(post.Tags) > 0 {
+						@TagList(post.Tags)
+					}
+				</div>
+			</div>
+		</header>
 
-        <div class="prose prose-neutral dark:prose-invert max-w-none">
-            @templ.Raw(post.HTMLContent)
-        </div>
-    </article>
+		<div class="prose prose-neutral dark:prose-invert max-w-none">
+			@templ.Raw(post.HTMLContent)
+		</div>
+	</article>
+}
+
+templ TagList(tags []string) {
+	<div class="flex flex-wrap gap-1.5">
+		for _, tag := range tags {
+			<a href={ TagFilterURL(tag) } class="tag no-underline" data-tag-filter={ tag }>{ tag }</a>
+		}
+	</div>
 }

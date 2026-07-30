@@ -3,7 +3,7 @@ package layouts
 import "github.com/srkn0/main/internal/templates/constants"
 
 templ BasePageLayout() {
-	<div id={ constants.PageLayoutID } class="flex flex-col grow relative">
+	<div id={ constants.PageLayoutID } class="min-h-screen bg-background text-foreground">
 		{ children... }
 	</div>
 }

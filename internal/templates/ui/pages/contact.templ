@@ -4,89 +4,52 @@ import (
 	"context"
 
 	i18npkg "github.com/srkn0/main/pkg/i18n"
-	"github.com/srkn0/main/pkg/templui/button"
-	"github.com/srkn0/main/pkg/templui/form"
-	"github.com/srkn0/main/pkg/templui/input"
-	"github.com/srkn0/main/pkg/templui/textarea"
 )
 
 templ Contact(ctx context.Context) {
-    <section class="px-4 sm:px-6 py-12 sm:py-16 max-w-3xl mx-auto">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-foreground mb-2">{ i18npkg.T(ctx, "contact_title") }</h1>
-        <p class="text-muted-foreground mb-8 sm:mb-10">{ i18npkg.T(ctx, "contact_desc") }</p>
+	<section class="space-y-7" aria-labelledby="contact-title">
+		<header class="space-y-3">
+			<h1 id="contact-title" class="text-3xl font-semibold tracking-normal text-foreground">{ i18npkg.T(ctx, "contact_title") }</h1>
+			<p class="max-w-[42rem] text-base leading-7 text-muted-foreground">{ i18npkg.T(ctx, "contact_desc") }</p>
+		</header>
 
-        <form
-            class="space-y-6"
-            hx-post="/contact"
-            hx-target="#contact-status"
-            hx-swap="innerHTML"
-            hx-disabled-elt="find button[type='submit']">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                @form.Item() {
-                    @form.Label(form.LabelProps{For: "contact-name"}) {
-                        { i18npkg.T(ctx, "contact_name") }
-                    }
-                    @input.Input(input.Props{
-                        ID:          "contact-name",
-                        Name:        "name",
-                        Type:        input.TypeText,
-                        Placeholder: i18npkg.T(ctx, "contact_name_placeholder"),
-                        Required:    true,
-                    })
-                }
-                @form.Item() {
-                    @form.Label(form.LabelProps{For: "contact-email"}) {
-                        { i18npkg.T(ctx, "contact_email") }
-                    }
-                    @input.Input(input.Props{
-                        ID:          "contact-email",
-                        Name:        "email",
-                        Type:        input.TypeEmail,
-                        Placeholder: i18npkg.T(ctx, "contact_email_placeholder"),
-                        Required:    true,
-                    })
-                }
-            </div>
+		<form
+			class="contact-form"
+			hx-post="/contact"
+			hx-target="#contact-status"
+			hx-swap="innerHTML"
+			hx-disabled-elt="find button[type='submit']"
+		>
+			<div class="contact-form-header">
+				<h2 class="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">{ i18npkg.T(ctx, "contact_form_title") }</h2>
+			</div>
 
-            @form.Item() {
-                @form.Label(form.LabelProps{For: "contact-subject"}) {
-                    { i18npkg.T(ctx, "contact_subject") }
-                }
-                @input.Input(input.Props{
-                    ID:          "contact-subject",
-                    Name:        "subject",
-                    Type:        input.TypeText,
-                    Placeholder: i18npkg.T(ctx, "contact_subject_placeholder"),
-                    Required:    true,
-                })
-            }
+			<div class="divide-y divide-border">
+				@ContactInput("contact-name", "name", "text", "name", i18npkg.T(ctx, "contact_name"), i18npkg.T(ctx, "contact_name_placeholder"))
+				@ContactInput("contact-email", "email", "email", "email", i18npkg.T(ctx, "contact_email"), i18npkg.T(ctx, "contact_email_placeholder"))
+				@ContactInput("contact-subject", "subject", "text", "", i18npkg.T(ctx, "contact_subject"), i18npkg.T(ctx, "contact_subject_placeholder"))
+				<div class="contact-field">
+					<label for="contact-message">{ i18npkg.T(ctx, "contact_message") }</label>
+					<textarea id="contact-message" name="message" rows="7" placeholder={ i18npkg.T(ctx, "contact_message_placeholder") } required></textarea>
+				</div>
+			</div>
 
-            @form.Item() {
-                @form.Label(form.LabelProps{For: "contact-message"}) {
-                    { i18npkg.T(ctx, "contact_message") }
-                }
-                @textarea.Textarea(textarea.Props{
-                    ID:          "contact-message",
-                    Name:        "message",
-                    Placeholder: i18npkg.T(ctx, "contact_message_placeholder"),
-                    Rows:        6,
-                    AutoResize:  true,
-                })
-            }
+			<div class="contact-form-footer">
+				<button type="submit" class="inline-flex min-h-10 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground outline-none transition-colors hover:bg-primary/90 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-60">
+					{ i18npkg.T(ctx, "contact_send") }
+				</button>
+				<div class="min-h-6 text-sm">
+					<span class="htmx-indicator text-muted-foreground">{ i18npkg.T(ctx, "contact_sending") }</span>
+					<div id="contact-status" aria-live="polite"></div>
+				</div>
+			</div>
+		</form>
+	</section>
+}
 
-            @button.Button(button.Props{
-                Type:      button.TypeSubmit,
-                Variant:   button.VariantDefault,
-                FullWidth: true,
-                Size:      button.SizeLg,
-            }) {
-                { i18npkg.T(ctx, "contact_send") }
-            }
-
-            <div class="mt-4 text-sm">
-                <span class="htmx-indicator text-muted-foreground">{ i18npkg.T(ctx, "contact_sending") }</span>
-                <div id="contact-status"></div>
-            </div>
-        </form>
-    </section>
+templ ContactInput(id string, name string, inputType string, autocomplete string, label string, placeholder string) {
+	<div class="contact-field">
+		<label for={ id }>{ label }</label>
+		<input id={ id } name={ name } type={ inputType } autocomplete={ autocomplete } placeholder={ placeholder } required/>
+	</div>
 }

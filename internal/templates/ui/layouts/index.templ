@@ -5,12 +5,6 @@ import (
 
 	"github.com/srkn0/main/internal/templates/constants"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
-	"github.com/srkn0/main/pkg/templui/dialog"
-	"github.com/srkn0/main/pkg/templui/input"
-	"github.com/srkn0/main/pkg/templui/label"
-	"github.com/srkn0/main/pkg/templui/popover"
-	"github.com/srkn0/main/pkg/templui/selectbox"
-	"github.com/srkn0/main/pkg/templui/toast"
 )
 
 templ Index(ctx context.Context) {
@@ -21,22 +15,15 @@ templ Index(ctx context.Context) {
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<link rel="icon" href="/public/favicon.svg" type="image/svg+xml"/>
-			<link href="/public/css/index.css" rel="stylesheet"/>
 			@noFlashThemeScript()
+			<link href="/public/css/index.css?v=portfolio-archive-11" rel="stylesheet"/>
 			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
-			<script src="https://unpkg.com/hyperscript.org@0.9.14"></script>
 			<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-			@dialog.Script()
-			@label.Script()
-			@input.Script()
-			@toast.Script()
-			@popover.Script()
-			@selectbox.Script()
 		</head>
 		<body>
 			<div id={ constants.GlobalToastID } class="fixed flex flex-col gap-3 bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 z-50 max-w-md items-end"></div>
 			{ children... }
-			<script src="/public/js/app.js" data-global-toast-id={ constants.GlobalToastID }></script>
+			<script src="/public/js/app.js?v=portfolio-archive-11" data-global-toast-id={ constants.GlobalToastID }></script>
 		</body>
 	</html>
 }
@@ -48,6 +35,10 @@ templ noFlashThemeScript() {
 				var t = localStorage.getItem("theme");
 				if (t === "dark" || (!t && window.matchMedia("(prefers-color-scheme:dark)").matches)) {
 					document.documentElement.classList.add("dark");
+				}
+				var accent = localStorage.getItem("accent");
+				if (["green", "amber", "rose", "violet"].indexOf(accent) !== -1) {
+					document.documentElement.dataset.accent = accent;
 				}
 			} catch (e) {}
 		})();

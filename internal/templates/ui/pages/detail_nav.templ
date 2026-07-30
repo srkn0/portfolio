@@ -1,0 +1,15 @@
+package pages
+
+import (
+	"github.com/srkn0/main/internal/templates/constants"
+	"github.com/srkn0/main/pkg/templui/icon"
+)
+
+templ DetailBackLink(href string, label string) {
+	<nav aria-label={ label } class="detail-nav">
+		<a href={ href } hx-get={ href } hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true" class="detail-back-link">
+			@icon.ArrowLeft(icon.Props{Class: "size-3.5 shrink-0"})
+			<span>{ label }</span>
+		</a>
+	</nav>
+}

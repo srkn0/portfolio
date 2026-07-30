@@ -5,13 +5,20 @@ import (
 
 	"github.com/srkn0/main/internal/templates/constants"
 	"github.com/srkn0/main/internal/templates/ui/components"
+	i18npkg "github.com/srkn0/main/pkg/i18n"
 )
 
 templ MainPageLayout(ctx context.Context) {
 	@BasePageLayout() {
-		@components.Header(ctx)
-		<main id={ constants.MainContentID } class="flex flex-col grow">
-			{ children... }
+		<a href={ "#" + constants.MainContentID } class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-medium focus:text-foreground focus:ring-2 focus:ring-ring">
+			{ i18npkg.T(ctx, "skip_to_content") }
+		</a>
+		@components.Sidebar(ctx)
+		@components.MobileNav(ctx)
+		<main id={ constants.MainContentID } class="app-main px-4 py-10 sm:px-6 sm:py-12 lg:py-14 lg:pl-16 lg:pr-12 xl:pl-20">
+			<div class="app-main-inner w-full">
+				{ children... }
+			</div>
 		</main>
 	}
 }

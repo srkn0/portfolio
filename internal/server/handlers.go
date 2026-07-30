@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/go-chi/chi/v5"
@@ -14,6 +16,7 @@ import (
 	"github.com/srkn0/main/internal/content"
 	"github.com/srkn0/main/internal/o11y"
 	"github.com/srkn0/main/internal/templates/templatetargets"
+	"github.com/srkn0/main/internal/templates/ui/components"
 	"github.com/srkn0/main/internal/templates/ui/pages"
 	i18npkg "github.com/srkn0/main/pkg/i18n"
 	"github.com/srkn0/main/pkg/util/render"
@@ -32,17 +35,19 @@ type handlers struct {
 func (h *handlers) landing(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	locale := i18npkg.GetLocale(ctx)
-	latestPosts, _, _ := h.posts.GetAll(1, postsPerPage, locale)
-	latestProjects := h.projects.GetAll(locale)
-	writeLayout(w, r, i18npkg.T(ctx, "page_home"), pages.LandingPage(ctx, latestPosts, latestProjects))
+	vm := pages.HomeViewModel{
+		LatestPosts:      h.posts.Latest(locale, 5),
+		FeaturedProjects: h.projects.Latest(locale, 4),
+		TopTags:          h.posts.TagCounts(locale),
+	}
+	h.writeLayout(w, r, i18npkg.T(ctx, "page_home"), pages.LandingPage(ctx, vm))
 }
 
 func (h *handlers) blogList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	page := parsePage(r.URL.Query().Get("page"))
 	locale := i18npkg.GetLocale(ctx)
-	posts, totalPages, _ := h.posts.GetAll(page, postsPerPage, locale)
-	writeLayout(w, r, i18npkg.T(ctx, "nav_blog"), pages.BlogList(ctx, posts, page, totalPages))
+	archive := h.posts.ArchiveByYear(locale)
+	h.writeLayout(w, r, i18npkg.T(ctx, "writing_title"), pages.BlogList(ctx, archive))
 }
 
 func (h *handlers) blogPost(w http.ResponseWriter, r *http.Request) {
@@ -53,14 +58,14 @@ func (h *handlers) blogPost(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	writeLayout(w, r, post.Title, pages.BlogPost(ctx, post))
+	h.writeLayout(w, r, post.Title, pages.BlogPost(ctx, post))
 }
 
 func (h *handlers) projectList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	locale := i18npkg.GetLocale(ctx)
 	projects := h.projects.GetAll(locale)
-	writeLayout(w, r, i18npkg.T(ctx, "nav_projects"), pages.ProjectList(ctx, projects))
+	h.writeLayout(w, r, i18npkg.T(ctx, "projects_title"), pages.ProjectList(ctx, projects))
 }
 
 func (h *handlers) projectDetail(w http.ResponseWriter, r *http.Request) {
@@ -71,13 +76,13 @@ func (h *handlers) projectDetail(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 		return
 	}
-	writeLayout(w, r, project.Title, pages.ProjectDetail(ctx, project))
+	h.writeLayout(w, r, project.Title, pages.ProjectDetail(ctx, project))
 }
 
 func (h *handlers) cvPage(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	locale := i18npkg.GetLocale(ctx)
-	writeLayout(w, r, i18npkg.T(ctx, "nav_cv"), pages.CV(ctx, h.cv.Get(locale)))
+	h.writeLayout(w, r, i18npkg.T(ctx, "nav_cv"), pages.CV(ctx, h.cv.Get(locale)))
 }
 
 func (h *handlers) cvPrint(w http.ResponseWriter, r *http.Request) {
@@ -91,7 +96,7 @@ func (h *handlers) cvPrint(w http.ResponseWriter, r *http.Request) {
 
 func (h *handlers) contact(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	writeLayout(w, r, i18npkg.T(ctx, "nav_contact"), pages.Contact(ctx))
+	h.writeLayout(w, r, i18npkg.T(ctx, "nav_contact"), pages.Contact(ctx))
 }
 
 func (h *handlers) contactSubmit(w http.ResponseWriter, r *http.Request) {
@@ -165,9 +170,39 @@ func parsePage(raw string) int {
 	return page
 }
 
-func writeLayout(w http.ResponseWriter, r *http.Request, title string, component templ.Component) {
+func (h *handlers) writeLayout(w http.ResponseWriter, r *http.Request, title string, component templ.Component) {
 	ctx := i18npkg.WithPageTitle(r.Context(), title)
+	locale := i18npkg.GetLocale(ctx)
+	ctx = components.WithLayoutData(ctx, components.LayoutViewModel{
+		CurrentPath:   r.URL.Path,
+		LatestWriting: h.posts.Latest(locale, 2),
+		ProjectLinks:  h.projects.Latest(locale, 3),
+		ExternalLinks: h.externalLinks(locale),
+	})
 	if err := render.Layout(ctx, r, w, templatetargets.Main, component); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+}
+
+func (h *handlers) externalLinks(locale string) []components.ExternalLink {
+	projects := h.projects.GetAll(locale)
+	for _, project := range projects {
+		if project.Repo == "" {
+			continue
+		}
+		parsed, err := url.Parse(project.Repo)
+		if err != nil {
+			continue
+		}
+		if strings.EqualFold(parsed.Host, "github.com") {
+			parts := strings.Split(strings.Trim(parsed.Path, "/"), "/")
+			if len(parts) > 0 && parts[0] != "" {
+				return []components.ExternalLink{{
+					Label: "GitHub",
+					URL:   "https://github.com/" + parts[0],
+				}}
+			}
+		}
+	}
+	return nil
 }

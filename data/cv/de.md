@@ -2,7 +2,6 @@
 ---
 
 # Serkan Köse
-
 <div class="leading-loose mb-4">
 
 <span class="iconify" data-icon="radix-icons:external-link"></span> [srkn.me](https://srkn.me/)<br>

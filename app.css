@@ -20,16 +20,32 @@ html {
 
 @layer base {
     * {
-        @apply border-border font-[barlow];
+        @apply border-border;
     }
     ::selection {
         @apply bg-selection text-selection-foreground;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply min-h-screen bg-background text-foreground font-[barlow] antialiased;
+        background-image:
+            linear-gradient(to bottom, color-mix(in oklch, var(--card) 45%, transparent), transparent 18rem),
+            linear-gradient(to right, color-mix(in oklch, var(--border) 45%, transparent) 1px, transparent 1px);
+        background-size: auto, 44px 44px;
         font-feature-settings:
             "rlig" 1,
             "calt" 1;
+    }
+    a {
+        @apply text-primary underline decoration-primary/30 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    }
+    code,
+    kbd,
+    samp,
+    pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    summary::-webkit-details-marker {
+        display: none;
     }
 }
 
@@ -39,11 +55,231 @@ html {
 .htmx-request.htmx-indicator { display: inline; }
 
 @layer components {
-    .glass-nav-btn {
-        @apply !bg-primary/[0.08] !text-primary !border !border-primary/12 !rounded-md !font-medium !text-sm !px-3.5 !py-1.5 !transition-all !duration-300 !ease-[cubic-bezier(0.4,0,0.2,1)] !backdrop-blur-[8px] !inline-flex !items-center !gap-1.5;
+    .app-sidebar {
+        width: 12.25rem;
+        box-shadow:
+            12px 0 30px -28px oklch(0 0 0 / 0.55),
+            inset -1px 0 color-mix(in oklch, var(--background) 55%, transparent),
+            inset 1px 0 color-mix(in oklch, var(--card) 55%, transparent);
     }
 
-    .glass-nav-btn:hover {
-        @apply !bg-primary/[0.18] !border-primary/25 !shadow-[0_2px_12px_oklch(54.6%_0.245_262.881/0.12)] -translate-y-px;
+    .app-main-inner {
+        max-width: 48rem;
+        margin-inline: 0 auto;
+    }
+
+    @media (min-width: 1024px) {
+        .app-main {
+            margin-left: 12.25rem;
+            min-height: 100vh;
+        }
+    }
+
+    .article-shell {
+        @apply max-w-[42rem];
+    }
+
+    .archive-row {
+        @apply grid grid-cols-1 gap-2 py-4 sm:grid-cols-[8rem_minmax(0,1fr)] sm:gap-5;
+        @apply rounded-md px-2 transition-colors;
+    }
+
+    .archive-date {
+        @apply text-sm leading-6 text-muted-foreground sm:pt-0.5;
+    }
+
+    .project-row {
+        @apply rounded-md px-2 py-5 transition-colors;
+    }
+
+    .archive-row:hover,
+    .project-row:hover {
+        @apply bg-card/70;
+        box-shadow:
+            0 1px 0 color-mix(in oklch, var(--border) 70%, transparent),
+            0 10px 24px -24px oklch(0 0 0 / 0.45);
+    }
+
+    .contact-form {
+        @apply rounded-md border border-border bg-card;
+        box-shadow:
+            0 1px 0 color-mix(in oklch, var(--card) 80%, white 20%) inset,
+            0 22px 54px -42px oklch(0 0 0 / 0.62),
+            0 1px 2px oklch(0 0 0 / 0.04);
+    }
+
+    .contact-form {
+        @apply overflow-hidden;
+    }
+
+    .contact-form-header,
+    .contact-form-footer {
+        @apply px-4 py-3;
+    }
+
+    .contact-form-header {
+        @apply border-b border-border bg-secondary/45;
+        box-shadow: inset 0 -1px color-mix(in oklch, var(--background) 70%, transparent);
+    }
+
+    .contact-form-footer {
+        @apply flex flex-col gap-3 border-t border-border bg-secondary/30 sm:flex-row sm:items-center sm:justify-between;
+        box-shadow: inset 0 1px color-mix(in oklch, var(--card) 70%, transparent);
+    }
+
+    .contact-field {
+        @apply grid grid-cols-1 gap-2 px-4 py-4 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-start sm:gap-5;
+    }
+
+    .contact-field label {
+        @apply pt-2 text-sm font-medium text-foreground;
+    }
+
+    .contact-field input,
+    .contact-field textarea {
+        @apply w-full rounded-md border border-transparent px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground hover:border-border focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/25;
+        background-color: var(--background);
+        box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.045);
+    }
+
+    .contact-field input:focus-visible,
+    .contact-field textarea:focus-visible {
+        background-color: var(--background);
+    }
+
+    .contact-field textarea {
+        @apply resize-y leading-6;
+    }
+
+    .detail-nav {
+        @apply border-b border-border pb-3;
+    }
+
+    .detail-back-link {
+        @apply inline-flex items-center gap-1.5 rounded-md text-xs font-medium uppercase tracking-[0.08em] text-muted-foreground no-underline decoration-transparent outline-none transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+    }
+
+    .accent-swatch {
+        @apply relative size-6 rounded-md border border-border outline-none transition-transform hover:-translate-y-px focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+        background: var(--swatch);
+        box-shadow:
+            inset 0 1px 0 oklch(1 0 0 / 0.28),
+            0 1px 2px oklch(0 0 0 / 0.08);
+    }
+
+    .accent-swatch[aria-checked="true"] {
+        @apply border-foreground;
+    }
+
+    .accent-swatch[aria-checked="true"]::after {
+        content: "";
+        position: absolute;
+        inset: 5px;
+        border-radius: 0.2rem;
+        border: 2px solid oklch(1 0 0 / 0.78);
+        box-shadow: 0 0 0 1px oklch(0 0 0 / 0.18);
+    }
+
+    .accent-swatch[data-accent-option="blue"] {
+        --swatch: oklch(0.55 0.12 238);
+    }
+
+    .accent-swatch[data-accent-option="green"] {
+        --swatch: oklch(0.55 0.12 158);
+    }
+
+    .accent-swatch[data-accent-option="amber"] {
+        --swatch: oklch(0.68 0.13 72);
+    }
+
+    .accent-swatch[data-accent-option="rose"] {
+        --swatch: oklch(0.6 0.15 18);
+    }
+
+    .accent-swatch[data-accent-option="violet"] {
+        --swatch: oklch(0.58 0.14 292);
+    }
+
+    .tag {
+        @apply inline-flex min-h-7 max-w-full items-center rounded-md border border-border bg-secondary px-2.5 py-1 text-xs font-medium leading-none text-muted-foreground no-underline outline-none transition-colors hover:border-primary/40 hover:bg-accent hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+        overflow-wrap: anywhere;
+    }
+
+    .tag-active {
+        @apply border-primary/50 bg-primary/10 text-primary;
+    }
+
+    .form-field {
+        @apply space-y-2;
+    }
+
+    .form-field label {
+        @apply block text-sm font-medium text-foreground;
+    }
+
+    .form-field input,
+    .form-field textarea {
+        @apply w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30;
+    }
+
+    .form-field textarea {
+        @apply resize-y leading-6;
+    }
+
+    .prose {
+        @apply text-foreground;
+    }
+
+    .prose a {
+        @apply text-primary decoration-primary/35 hover:text-foreground hover:decoration-foreground;
+    }
+
+    .prose h1,
+    .prose h2,
+    .prose h3,
+    .prose h4 {
+        @apply scroll-mt-24 tracking-normal text-foreground;
+    }
+
+    .prose h1 {
+        @apply text-3xl;
+    }
+
+    .prose h2 {
+        @apply mt-10 border-b border-border pb-2 text-2xl;
+    }
+
+    .prose p,
+    .prose li {
+        @apply leading-7;
+    }
+
+    .prose pre {
+        @apply overflow-x-auto rounded-md border border-border bg-card text-card-foreground;
+    }
+
+    .prose code {
+        @apply rounded-sm bg-muted px-1 py-0.5 text-[0.9em] text-foreground;
+    }
+
+    .prose pre code {
+        @apply bg-transparent p-0 text-card-foreground;
+    }
+
+    .prose blockquote {
+        @apply border-l-primary/50 text-muted-foreground;
+    }
+
+    .prose table {
+        @apply block overflow-x-auto;
+    }
+
+    .prose th,
+    .prose td {
+        @apply border border-border px-3 py-2;
+    }
+
+    .cv a {
+        @apply text-primary;
     }
 }
