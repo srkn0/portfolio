@@ -6,7 +6,6 @@
 
 <span class="iconify" data-icon="radix-icons:external-link"></span> [srkn.me](https://srkn.me/)<br>
 <span class="iconify" data-icon="tabler:brand-github"></span> [github.com/srkn0](https://github.com/srkn0)<br>
-
 </div>
 
 ## Berufserfahrung
@@ -19,13 +18,13 @@
 </div>
 
 <ul class="list-disc pl-5 space-y-2 mb-5">
-<li>Kubernetes-Cluster-Aufbau und Betrieb mit Kubespray, MetalLB, Calico CNI, CephCSI und Traefik</li>
-<li>GitOps mit FluxCD + Kustomize - Continuous Deployment von Kubernetes-Ressourcen und Container-Rollouts </li>
-<li>Deployment, Upgrade und Migration von Applikationen und Datenbanken, inkl. Betreuung der Hauptanwendungen der Firma</li>
+<li>Aufbau, Betrieb und kontinuierliche Weiterentwicklung von Kubernetes-Clustern mit Kubespray, MetalLB, Calico CNI, CephCSI und Traefik</li>
+<li>GitOps mit FluxCD und Kustomize für standardisierte, nachvollziehbare Deployments von Kubernetes-Ressourcen und Container-Rollouts</li>
+<li>Deployment, Upgrade und Migration von Open-Source-Applikationen und Datenbanken, inkl. Betreuung der Hauptanwendungen der Firma</li>
 <li>Entwicklung eines Kubernetes-Operators (OperatorSDK) zur Automatisierung von Backup/Restore-Prozessen</li>
-<li>Pipeline-Automatisierung mit GitLab CI für Container-Image-Builds und Deployments</li>
-<li>Verantwortung für Observability-Stack (Prometheus, Grafana, Loki, Tempo, OpenTelemetry), <br>Erstellung und Anpassung von Custom Prometheus Exportern zur Erweiterung des Monitorings</li>
-<li>Infrastruktur-Automatisierung mit Ansible und Bash</li>
+<li>Pipeline-Automatisierung mit GitLab CI für Container-Image-Builds, Deployments und wiederholbare Release-Prozesse</li>
+<li>Infrastruktur- und Betriebsautomatisierung mit Ansible und Bash</li>
+<li>Verantwortung für Observability-Stack (Prometheus, Grafana, Loki, Tempo, OpenTelemetry), <br>inkl. Custom Prometheus Exportern zur Erweiterung des Monitorings</li>
 </ul>
 
 <hr class="border-border/40 my-4">
@@ -42,7 +41,7 @@
 <li>Bereitstellung und Betreuung virtueller Maschinen mit VMware ESXi</li>
 <li>Monitoring städtischer IT-Systeme mit CheckMK</li>
 <li>Anwendersupport im 1st-Level für Fachbereiche</li>
-<li>Internes Projekt: Zentralisiertes Logmanagement mit Elastic Stack (ELK)</li>
+<li>Internes Projekt: Zentralisiertes Logmanagement mit Elastic Stack (ELK) zur besseren Nachvollziehbarkeit von Betriebsereignissen</li>
 <li>Abschlussprojekt: Evaluierung und Einführung von Prometheus & Grafana als Monitoringlösung</li>
 </ul>
 
@@ -74,7 +73,7 @@
 
 <div>
 <strong class="text-xs uppercase tracking-wide text-muted-foreground">Operations</strong>
-<p class="mt-0.5"><span class="iconify" data-icon="logos:kubernetes"></span> Kubernetes | <span class="iconify" data-icon="simple-icons:flux"></span> FluxCD | <span class="whitespace-nowrap"><img src="/public/img/icons/kustomize.png" alt="" class="cv-skill-icon"> Kustomize</span> <br><span class="iconify" data-icon="logos:helm"></span> Helm | <span class="iconify" data-icon="logos:ansible"></span> Ansible | <span class="iconify" data-icon="simple-icons:gnubash"></span> Bash <br><span class="iconify" data-icon="material-icon-theme:gitlab"></span> GitLab CI | <span class="iconify" data-icon="logos:docker-icon"></span> Docker | <span class="iconify" data-icon="simple-icons:proxmox"></span> Proxmox</p>
+<p class="mt-0.5"><span class="iconify" data-icon="logos:kubernetes"></span> Kubernetes | <span class="iconify" data-icon="simple-icons:flux"></span> FluxCD | <span class="whitespace-nowrap"><img src="/public/img/icons/kustomize.png" alt="" class="cv-skill-icon"> Kustomize</span> <br><span class="iconify" data-icon="logos:helm"></span> Helm | <span class="iconify" data-icon="logos:ansible"></span> Ansible | <span class="iconify" data-icon="simple-icons:gnubash"></span> Bash <br><span class="iconify" data-icon="material-icon-theme:gitlab"></span> GitLab CI | <span class="iconify" data-icon="logos:docker-icon"></span> Docker | Linux | Proxmox</p>
 </div>
 
 <div>

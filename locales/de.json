@@ -63,6 +63,7 @@
   "contact_error_send": "Senden hat nicht geklappt. Bitte versuche es später nochmal.",
   "theme_toggle": "Darstellung umschalten",
   "language_switcher": "Sprache wechseln",
+  "github_repo": "GitHub-Repository öffnen",
   "accent_color": "Akzent",
   "accent_blue": "Blauer Akzent",
   "accent_green": "Gruener Akzent",

@@ -32,6 +32,7 @@ templ Sidebar(ctx context.Context) {
 					@NavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), icon.FolderKanban, vm.CurrentPath)
 					@NavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), icon.FileUser, vm.CurrentPath)
 					@NavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), icon.Mail, vm.CurrentPath)
+					@ExternalNavItem(ctx, "https://github.com/srkn0/portfolio", "GitHub", i18npkg.T(ctx, "github_repo"), icon.Github)
 				</nav>
 			}
 		</div>
@@ -75,6 +76,7 @@ templ MobileNav(ctx context.Context) {
 							@MobileNavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), vm.CurrentPath)
+							@MobileExternalNavItem("https://github.com/srkn0/portfolio", "GitHub", i18npkg.T(ctx, "github_repo"))
 						</nav>
 						<div class="mt-3 flex items-center justify-between border-t border-border pt-3">
 							<span class="px-2 text-xs font-medium text-muted-foreground">{ i18npkg.T(ctx, "accent_color") }</span>
@@ -111,6 +113,20 @@ templ NavItem(ctx context.Context, href string, label string, iconFunc func(...i
 	</a>
 }
 
+templ ExternalNavItem(ctx context.Context, href string, label string, ariaLabel string, iconFunc func(...icon.Props) templ.Component) {
+	<a
+		href={ href }
+		class="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm leading-none text-muted-foreground no-underline outline-none transition-colors hover:bg-accent/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		aria-label={ ariaLabel }
+		title={ ariaLabel }
+		target="_blank"
+		rel="noreferrer"
+	>
+		@iconFunc(icon.Props{Class: "size-4 shrink-0"})
+		<span>{ label }</span>
+	</a>
+}
+
 templ MobileNavItem(ctx context.Context, href string, label string, currentPath string) {
 	<a
 		href={ href }
@@ -122,6 +138,17 @@ templ MobileNavItem(ctx context.Context, href string, label string, currentPath 
 		if ActivePath(currentPath, href) {
 			aria-current="page"
 		}
+	>{ label }</a>
+}
+
+templ MobileExternalNavItem(href string, label string, ariaLabel string) {
+	<a
+		href={ href }
+		class="block rounded-md px-2 py-1.5 text-sm text-muted-foreground no-underline outline-none transition-colors hover:bg-accent/70 hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+		aria-label={ ariaLabel }
+		title={ ariaLabel }
+		target="_blank"
+		rel="noreferrer"
 	>{ label }</a>
 }
 
