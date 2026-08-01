@@ -6,6 +6,9 @@
 
 <span class="iconify" data-icon="radix-icons:external-link"></span> [srkn.me](https://srkn.me/)<br>
 <span class="iconify" data-icon="tabler:brand-github"></span> [github.com/srkn0](https://github.com/srkn0)<br>
+<!-- <span class="iconify" data-icon="ic:outline-location-on"></span> x<br>
+<span class="iconify" data-icon="tabler:mail"></span> [x](x)
+<span class="iconify" data-icon="tabler:phone"></span> (+49) x<br> -->
 </div>
 
 ## Berufserfahrung

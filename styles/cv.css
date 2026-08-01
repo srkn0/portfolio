@@ -45,7 +45,11 @@
         padding: 10mm 12mm;
     }
 
-    .cv a,
+    .cv a {
+        color: black;
+        text-decoration: none;
+    }
+
     .cv .text-muted-foreground,
     .cv .font-semibold {
         color: black;
