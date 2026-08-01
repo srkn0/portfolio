@@ -18,7 +18,7 @@
   "home_all_writing": "All writing",
   "home_all_projects": "All projects",
   "writing_title": "Writing",
-  "writing_intro": "Notes and articles from operations, homelab work, Go, and infrastructure. The archive is chronological and filterable.",
+  "writing_intro": "Notes and articles from operations, homelab work, and infrastructure. The archive is chronological and filterable.",
   "writing_search_label": "Filter archive",
   "writing_search_placeholder": "Title, tag, year, or topic",
   "writing_empty": "No posts yet.",

@@ -18,7 +18,7 @@
   "home_all_writing": "Alle Texte",
   "home_all_projects": "Alle Projekte",
   "writing_title": "Texte",
-  "writing_intro": "Notizen und Artikel aus Betrieb, Homelab, Go und Infrastruktur. Das Archiv ist chronologisch sortiert und direkt filterbar.",
+  "writing_intro": "Notizen und Artikel aus Betrieb, Homelab und Infrastruktur. Das Archiv ist chronologisch sortiert und direkt filterbar.",
   "writing_search_label": "Archiv filtern",
   "writing_search_placeholder": "Titel, Tag, Jahr oder Thema",
   "writing_empty": "Noch keine Beiträge.",
