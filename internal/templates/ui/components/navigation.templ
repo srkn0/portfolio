@@ -33,7 +33,7 @@ templ Sidebar(ctx context.Context) {
 					@NavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), icon.FolderKanban, vm.CurrentPath)
 					@NavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), icon.FileUser, vm.CurrentPath)
 					@NavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), icon.Mail, vm.CurrentPath)
-					@ExternalNavItem(ctx, "https://github.com/srkn0/portfolio", "GitHub", i18npkg.T(ctx, "github_repo"), icon.Github)
+					@ExternalNavItem(ctx, "https://github.com/srkn0", "GitHub", i18npkg.T(ctx, "github_profile"), icon.Github)
 				</nav>
 			}
 		</div>
@@ -77,7 +77,7 @@ templ MobileNav(ctx context.Context) {
 							@MobileNavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), vm.CurrentPath)
-							@MobileExternalNavItem("https://github.com/srkn0/portfolio", "GitHub", i18npkg.T(ctx, "github_repo"))
+							@MobileExternalNavItem("https://github.com/srkn0", "GitHub", i18npkg.T(ctx, "github_profile"))
 						</nav>
 						<div class="mt-3 flex items-center justify-between border-t border-border pt-3">
 							<span class="px-2 text-xs font-medium text-muted-foreground">{ i18npkg.T(ctx, "accent_color") }</span>
