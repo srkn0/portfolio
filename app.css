@@ -258,6 +258,25 @@ html {
         @apply overflow-x-auto rounded-md border border-border bg-card text-card-foreground;
     }
 
+    .prose pre.mermaid {
+        @apply flex justify-center p-3;
+        width: fit-content;
+        max-width: 100%;
+        margin-inline: auto;
+        font-family: inherit;
+    }
+
+    .prose pre.mermaid svg {
+        display: block;
+        width: min(100%, 34rem) !important;
+        max-width: 100%;
+        height: auto;
+    }
+
+    .prose pre.mermaid[data-mermaid-error="true"] {
+        @apply block text-sm;
+    }
+
     .prose code {
         @apply rounded-sm bg-muted px-1 py-0.5 text-[0.9em] text-foreground;
     }

@@ -3,6 +3,8 @@ title: "NixOS Workstation Setup"
 description: "Deklarative NixOS-Konfiguration für zwei Laptops. Flakes, Home Manager, host-spezifische Module, disko für Disk-Layouts, Secure Boot/TPM auf dem XPS 17 und eine eigene cx-TUI für wiederkehrende Commands."
 tags: [nixos, nix, home-manager, flakes, dotfiles, linux]
 date: 2026-07-23
+category: workstation
+featured: 5
 repo: https://github.com/srkn0/nixbase
 ---
 

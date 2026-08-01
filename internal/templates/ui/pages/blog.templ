@@ -119,3 +119,11 @@ templ TagList(tags []string) {
 		}
 	</div>
 }
+
+templ ProjectTagList(tags []string) {
+	<div class="flex flex-wrap gap-1.5">
+		for _, tag := range tags {
+			<span class="tag">{ tag }</span>
+		}
+	</div>
+}

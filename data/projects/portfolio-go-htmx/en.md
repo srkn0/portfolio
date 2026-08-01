@@ -3,6 +3,7 @@ title: "Portfolio with Go, HTMX and Templ"
 description: "Personal portfolio and blog. Go on the backend, HTMX on the frontend, Templ as the template engine, Markdown as the content store. Ships as a single binary with everything embedded."
 tags: [go, htmx, templ, tailwind, markdown]
 date: 2026-05-10
+category: lab
 repo: https://github.com/srkn0/portfolio
 ---
 
@@ -16,18 +17,18 @@ The initial scaffold was [go-htmx-starter](https://github.com/carsonkrueger/go-h
 
 ## Stack
 
-- Go 1.24+
+- Go 1.26.2
 - Chi as the HTTP router
 - Templ for type-safe templates, compiled to Go code
 - TemplUI as a component library on top of Templ
-- HTMX and Hyperscript for frontend behavior
+- HTMX and small vanilla JavaScript for frontend behavior
 - Tailwind CSS v4
 - Goldmark as the Markdown parser with GFM, footnotes, frontmatter
 - go-i18n for German and English
 - Air for hot reload in dev
-- Taskfile as the task runner
+- mise tasks for code generation and the dev workflow
 
-In production everything compiles into a single binary. Markdown files, CSS, fonts and JS live in `embed.FS`, no external filesystem at runtime.
+In production the app code, Markdown files, and local CSS, font and JS assets compile into a single binary. Content and local assets live in `embed.FS`, no external filesystem at runtime.
 
 ## Architecture
 
@@ -37,7 +38,7 @@ Three areas.
 
 **Templates.** The UI lives in `internal/templates/ui/`. Layouts, pages, components. Templ generates type-safe Go functions. Template errors surface at build time, not in the browser.
 
-**Server.** Chi router with a middleware stack (logger, recoverer, i18n cookie lookup). Handlers pull content from the in-memory store, render the matching template and reply with a full page or just a fragment depending on the HTMX header.
+**Server.** Chi router with a middleware stack (logger, recoverer, metrics, i18n cookie lookup). Handlers pull content from the in-memory store, render the matching template and reply with a full page or just a fragment depending on the HTMX header.
 
 ## i18n
 
@@ -47,13 +48,13 @@ Static strings go through go-i18n and JSON files in `locales/`.
 
 ## HTMX layout
 
-The first request to a page returns the full HTML with the layout. For internal links HTMX sends a request with `HX-Request: true`, and the server responds with just the content fragment. Header, footer and JS state stay alive, without an SPA framework.
+The first request to a page returns the full HTML with the layout. For internal links HTMX sends a request with `HX-Request: true`, and the server responds with just the content fragment. Navigation and JS state stay alive, without an SPA framework.
 
 Layout selection happens in `pkg/util/render`, based on the HTMX header.
 
 ## Dark mode
 
-CSS plus a bit of Hyperscript. The toggle sets a class on the `html` tag and writes to `localStorage`. On first load the stored value or system preference is read before the CSS applies, so there is no flash.
+CSS plus small vanilla JavaScript. The toggle sets a class on the `html` tag and writes to `localStorage`. On first load the stored value or system preference is read before the CSS applies, so there is no flash.
 
 ## Planned
 

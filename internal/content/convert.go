@@ -3,6 +3,7 @@ package content
 import (
 	"bytes"
 	"fmt"
+	"regexp"
 	"time"
 
 	"github.com/yuin/goldmark"
@@ -14,6 +15,8 @@ import (
 )
 
 const defaultLocale = "de"
+
+var mermaidCodeBlockRE = regexp.MustCompile(`(?s)<pre><code class="language-mermaid">(.*?)</code></pre>`)
 
 func isSupportedLocale(locale string) bool {
 	return locale == "de" || locale == "en"
@@ -48,7 +51,11 @@ func convertMarkdown(src []byte) (htmlContent string, meta map[string]any, err e
 		return "", nil, err
 	}
 
-	return buf.String(), meta, nil
+	return renderMermaidCodeBlocks(buf.String()), meta, nil
+}
+
+func renderMermaidCodeBlocks(htmlContent string) string {
+	return mermaidCodeBlockRE.ReplaceAllString(htmlContent, `<pre class="mermaid">$1</pre>`)
 }
 
 func parseMeta(meta map[string]any) (title, description string, tags []string, date time.Time, err error) {

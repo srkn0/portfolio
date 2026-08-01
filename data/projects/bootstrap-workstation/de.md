@@ -3,6 +3,8 @@ title: "Ansible Bootstrap für meine Workstation"
 description: "Älteres, weiterhin koexistierendes Ansible-Bootstrap für eine Linux/WSL2-Workstation. Ansible verwaltet die OS-Ebene, mise alle CLI-Tools und Language-Runtimes; unter WSL wird der Nerd Font auf dem Windows-Host installiert."
 tags: [ansible, mise, wsl, dotfiles, neovim, zsh, molecule]
 date: 2026-05-30
+category: workstation
+featured: 6
 repo: https://github.com/srkn0/bootstrap-workstation
 ---
 

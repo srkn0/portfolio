@@ -37,7 +37,7 @@ func (h *handlers) landing(w http.ResponseWriter, r *http.Request) {
 	locale := i18npkg.GetLocale(ctx)
 	vm := pages.HomeViewModel{
 		LatestPosts:      h.posts.Latest(locale, 5),
-		FeaturedProjects: h.projects.Latest(locale, 4),
+		FeaturedProjects: h.projects.Featured(locale, 4),
 		TopTags:          h.posts.TagCounts(locale),
 	}
 	h.writeLayout(w, r, i18npkg.T(ctx, "page_home"), pages.LandingPage(ctx, vm))
@@ -64,8 +64,8 @@ func (h *handlers) blogPost(w http.ResponseWriter, r *http.Request) {
 func (h *handlers) projectList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	locale := i18npkg.GetLocale(ctx)
-	projects := h.projects.GetAll(locale)
-	h.writeLayout(w, r, i18npkg.T(ctx, "projects_title"), pages.ProjectList(ctx, projects))
+	groups := h.projects.Grouped(locale)
+	h.writeLayout(w, r, i18npkg.T(ctx, "projects_title"), pages.ProjectList(ctx, groups))
 }
 
 func (h *handlers) projectDetail(w http.ResponseWriter, r *http.Request) {

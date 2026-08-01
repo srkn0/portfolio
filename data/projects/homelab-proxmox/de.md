@@ -3,6 +3,8 @@ title: "Homelab: Proxmox"
 description: "Single-Node-Proxmox-Homelab, komplett mit Ansible provisioniert. Vom preseedeten Debian-Installer bis zu laufenden Kubernetes-Clustern: ZFS für Storage, cloud-init für VM-Templates, Kubespray für die Cluster."
 tags: [ansible, proxmox, kubernetes, kubespray, zfs, cloud-init]
 date: 2026-05-30
+category: infrastructure
+featured: 2
 repo: https://github.com/srkn0/homelab-proxmox
 ---
 

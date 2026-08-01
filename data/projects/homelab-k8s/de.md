@@ -3,12 +3,14 @@ title: "Homelab: Kubernetes + GitOps"
 description: "GitOps-Repository für zwei Homelab-Kubernetes-Cluster mit Flux v2. Produktion und Dev teilen eine gemeinsame Basis: HelmReleases, Kustomizations und Werte liegen einmal im Repo, pro Cluster nur Variablen und Chart-Versionen."
 tags: [flux, gitops, kubernetes, helm, sops, renovate]
 date: 2026-05-30
+category: infrastructure
+featured: 1
 repo: https://github.com/srkn0/homelab-k8s
 ---
 
 ## Überblick
 
-GitOps für meine Homelab-Infrastruktur. Flux pollt das Repository und synchronisiert es in den Cluster; ein Push genügt. Ein neuer Cluster entsteht als ein Verzeichnis mit clusterspezifischen Variablen, nicht als Kopie der App-Manifeste.
+GitOps für meine Homelab-Infrastruktur. Flux pollt das Repository und synchronisiert es in den Cluster; ein Push genügt. Ein neues Cluster entsteht als ein kleines Verzeichnis mit Variablen und Patches, nicht als Kopie der App-Manifeste.
 
 ## Stack & Architektur
 
@@ -22,7 +24,35 @@ GitOps für meine Homelab-Infrastruktur. Flux pollt das Repository und synchroni
 - Renovate für Dependency-Updates
 - go-task als Task-Runner, verwaltet über mise
 
-**Multi-Cluster:** Alle Flux-`Kustomization`-Ressourcen liegen unter `clusters/_base/`. Ein Cluster-Verzeichnis enthält nur `flux/apps.yaml` (Variablen und Chart-Versionen), `flux/crds.yaml` sowie includes aus der `_base` oder optionale Patches unter `apps/` und `crds/`. Kein App-Manifest wird zwischen den Clustern dupliziert.
+**Multi-Cluster:**
+
+```text
+kubernetes/clusters/
+├── _base/
+│   ├── apps.yaml        # gemeinsame Flux-Kustomizations
+│   └── crds.yaml        # gemeinsame CRD-Kustomizations
+├── k8s-home-01/
+│   ├── flux/
+│   │   ├── apps.yaml    # Variablen + Chart-Versionen
+│   │   └── crds.yaml    # CRD-Versionen
+│   ├── apps/            # optionale App-Patches
+│   └── crds/            # optionale CRD-Patches
+├── k8s-dev/
+│   └── ...
+└── k8s-portfolio/
+    └── ...
+```
+
+```mermaid
+flowchart LR
+    base["clusters/_base"] --> cluster["Cluster"]
+    cluster --> vars["flux/*.yaml"]
+    cluster --> patches["apps/ + crds/"]
+    vars --> sync["Flux rendert"]
+    patches --> sync
+```
+
+App-Manifeste liegen einmal in der Base. Pro Cluster ändern sich nur Variablen, Versionen und optionale Patches.
 
 **Variablen-Substitution:** Flux setzt beim Sync die Variablen aus `flux/apps.yaml` per `postBuild` in alle referenzierten Kustomizations und deren HelmRelease-Werte ein. Domain, MetalLB-IPs, SMTP-Host und die Chart-Version jeder App stehen so an einer einzigen Stelle pro Cluster.
 

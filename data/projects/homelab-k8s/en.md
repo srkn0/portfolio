@@ -3,6 +3,8 @@ title: "Homelab: Kubernetes + GitOps"
 description: "GitOps repository for two homelab Kubernetes clusters running Flux v2. Production and dev share a common base: HelmReleases, Kustomizations and values live once in the repo, per cluster only variables and chart versions."
 tags: [flux, gitops, kubernetes, helm, sops, renovate]
 date: 2026-05-30
+category: infrastructure
+featured: 1
 repo: https://github.com/srkn0/homelab-k8s
 ---
 
@@ -23,7 +25,35 @@ GitOps for my homelab infrastructure. Flux polls the repository and syncs it int
 - Renovate for dependency updates
 - go-task as the task runner, managed via mise
 
-**Multi-cluster:** All Flux `Kustomization` resources live under `clusters/_base/`. A cluster directory holds only `flux/apps.yaml` (variables and chart versions), `flux/crds.yaml`, includes from `_base` and optional patches under `apps/` and `crds/`. No app manifest is duplicated between clusters.
+**Multi-cluster:**
+
+```text
+kubernetes/clusters/
+├── _base/
+│   ├── apps.yaml        # shared Flux Kustomizations
+│   └── crds.yaml        # shared CRD Kustomizations
+├── k8s-home-01/
+│   ├── flux/
+│   │   ├── apps.yaml    # variables + chart versions
+│   │   └── crds.yaml    # CRD versions
+│   ├── apps/            # optional app patches
+│   └── crds/            # optional CRD patches
+├── k8s-dev/
+│   └── ...
+└── k8s-portfolio/
+    └── ...
+```
+
+```mermaid
+flowchart LR
+    base["clusters/_base"] --> cluster["cluster"]
+    cluster --> vars["flux/*.yaml"]
+    cluster --> patches["apps/ + crds/"]
+    vars --> sync["Flux renders"]
+    patches --> sync
+```
+
+App manifests live once in the base. Per cluster only variables, versions and optional patches change.
 
 **Variable substitution:** At sync time Flux injects the variables from `flux/apps.yaml` via `postBuild` into all referenced Kustomizations and their HelmRelease values. Domain, MetalLB IPs, SMTP host and each app's chart version thus sit in a single place per cluster.
 

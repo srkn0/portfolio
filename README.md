@@ -15,7 +15,7 @@ The initial scaffold (router + Templ + HTMX layout pattern) was lifted from [car
 - **Dark mode** -- Toggle with localStorage persistence and system preference detection
 - **Type-safe templates** -- UI built with [Templ](https://templ.guide) and [TemplUI](https://templui.com) components
 - **HTMX navigation** -- SPA-like page transitions without a JavaScript framework
-- **Single binary** -- All static assets, templates, and content embedded via `embed.FS`
+- **Single binary** -- Content and local static assets are embedded via `embed.FS`, templates compile into Go code
 - **Print-ready CV** -- Dedicated print stylesheet for A4 PDF export
 
 ---
@@ -47,7 +47,7 @@ graph TB
 
     subgraph Assets
         CSS[Tailwind CSS v4]
-        JS[HTMX + Hyperscript + Iconify]
+        JS[HTMX + Iconify + app.js]
     end
 
     M --> R
@@ -94,7 +94,7 @@ sequenceDiagram
 .
 ├── main.go                          # Entry point: embeds FS, inits i18n, starts server
 ├── app.css                          # Tailwind CSS v4 source (themes, custom styles)
-├── Taskfile.yaml                    # Task runner: templ generate + tailwind build
+├── .mise.toml                       # Tool versions + tasks for templ, tailwind and dev
 ├── .air.toml                        # Air config for hot-reload dev server
 ├── go.mod / go.sum                  # Go module definition
 ├── package.json                     # Tailwind CSS + plugins (Node.js)
@@ -104,7 +104,7 @@ sequenceDiagram
 │   │   └── {slug}/{locale}.md       # e.g. data/posts/learning-go-zero-values-and-types/de.md
 │   ├── projects/                    # Projects, one folder per project
 │   │   └── {slug}/{locale}.md
-│   └── cv/                          # CV content ({name}.{locale}.md)
+│   └── cv/                          # CV content ({locale}.md)
 │
 ├── locales/                         # i18n translation files (embedded)
 │   ├── de.json
@@ -113,9 +113,9 @@ sequenceDiagram
 ├── internal/
 │   ├── server/                      # Chi router, routes, middleware, HTTP server
 │   │   └── server.go
-│   ├── markdown_to_html/            # Markdown parsing pipeline (Goldmark)
+│   ├── content/                     # Markdown parsing pipeline (Goldmark)
 │   │   ├── convert.go               # Core markdown to HTML converter + frontmatter parser
-│   │   ├── post.go                  # Post loading + in-memory store + pagination
+│   │   ├── post.go                  # Post loading + in-memory store + archive helpers
 │   │   ├── project.go               # Project loading + store
 │   │   └── cv.go                    # CV loading
 │   └── templates/
@@ -140,7 +140,7 @@ sequenceDiagram
 └── public/                          # Static assets (embedded at build time)
     ├── css/                         # Compiled Tailwind CSS
     ├── fonts/                       # Custom fonts (Barlow, Science)
-    └── js/                          # TemplUI component scripts + HTMX dependencies
+    └── js/                          # TemplUI component scripts + app JS
 ```
 
 ---
@@ -149,7 +149,7 @@ sequenceDiagram
 
 ### Prerequisites
 
-- [Go](https://go.dev/dl/) 1.24+
+- [Go](https://go.dev/dl/) 1.26.2
 - [Node.js](https://nodejs.org/) (for Tailwind CSS)
 - [mise](https://mise.jdx.dev/) (optional, for tool version management)
 - [air](https://github.com/cosmtrek/air) (for hot-reload dev server)
@@ -165,19 +165,19 @@ mise install
 ### Run Development Server
 
 ```bash
-air
+mise run dev
 ```
 
 This starts the dev server on `http://localhost:8080` with hot-reload. Air will:
 
-1. Run `task templ` -- generates Go code from `.templ` files
-2. Run `task tailwind` -- compiles Tailwind CSS
+1. Run `go tool templ generate` -- generates Go code from `.templ` files
+2. Run `npx @tailwindcss/cli -i app.css -o ./public/css/index.css` -- compiles Tailwind CSS
 3. Rebuild and restart on file changes
 
 ### Build for Production
 
 ```bash
-task templ && task tailwind
+mise run gen
 go build -o portfolio .
 ```
 
@@ -224,11 +224,20 @@ title: "Project Name"
 description: "What it does"
 tags: [kubernetes, golang]
 date: 2026-01-15
+category: platform
+featured: 10
 image: "/public/images/project.png"
 repo: https://github.com/user/repo
 demo: https://demo.example.com
 ---
 ```
+
+Project metadata:
+
+- `category` controls grouping on `/projects`: `infrastructure`, `platform`,
+  `template`, `workstation`, `lab`, or `wip`.
+- `featured` is an optional integer used for homepage ordering. Lower numbers
+  appear first; projects without it fall back to date ordering.
 
 ### Adding CV Content
 
@@ -268,17 +277,17 @@ Locale is detected from (in priority order):
 
 | Layer | Technology |
 |---|---|
-| Language | Go 1.24+ |
+| Language | Go 1.26.2 |
 | Router | [Chi](https://github.com/go-chi/chi) |
 | Templates | [Templ](https://templ.guide) |
 | UI Components | [TemplUI](https://templui.com) |
-| Interactivity | [HTMX](https://htmx.org) + [Hyperscript](https://hyperscript.org) |
+| Interactivity | [HTMX](https://htmx.org) + small vanilla JS |
 | CSS | [Tailwind CSS v4](https://tailwindcss.com) |
 | Markdown | [Goldmark](https://github.com/yuin/goldmark) with GFM, footnotes, frontmatter |
 | i18n | [go-i18n](https://github.com/nicksnyder/go-i18n) |
 | Icons | [Iconify](https://iconify.design) |
 | Hot Reload | [Air](https://github.com/cosmtrek/air) |
-| Task Runner | [Taskfile](https://taskfile.dev) |
+| Task Runner | [mise tasks](https://mise.jdx.dev/tasks/) |
 
 ---
 
@@ -287,14 +296,19 @@ Locale is detected from (in priority order):
 | Method | Path | Description |
 |---|---|---|
 | GET | `/` | Landing page with latest posts and projects |
-| GET | `/blog` | Blog list with pagination (`?page=2`) |
+| GET | `/blog` | Blog archive with client-side filtering |
 | GET | `/blog/{slug}` | Individual blog post |
 | GET | `/projects` | All projects |
 | GET | `/projects/{slug}` | Individual project detail |
 | GET | `/cv` | CV / resume |
+| GET | `/cv/print` | Print-optimized CV |
 | GET | `/contact` | Contact page |
+| POST | `/contact` | Submit contact form |
 | GET | `/lang?set=en` | Set language cookie and redirect |
 | GET | `/public/*` | Static assets (CSS, fonts, JS) |
+| GET | `/metrics` | Prometheus metrics |
+| GET | `/healthz` | Liveness probe |
+| GET | `/readyz` | Readiness probe |
 
 ---
 

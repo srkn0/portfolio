@@ -1,6 +1,43 @@
 (() => {
     const currentScript = document.currentScript;
     const globalToastID = currentScript?.dataset?.globalToastId;
+    let mermaidPromise;
+
+    function getMermaid() {
+        if (!mermaidPromise) {
+            mermaidPromise = import("https://cdn.jsdelivr.net/npm/mermaid@11.16.0/dist/mermaid.esm.min.mjs")
+                .then((module) => {
+                    const mermaid = module.default;
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        securityLevel: "strict",
+                        theme: document.documentElement.classList.contains("dark") ? "dark" : "default",
+                    });
+                    return mermaid;
+                });
+        }
+
+        return mermaidPromise;
+    }
+
+    async function initMermaid(root = document) {
+        const candidates = [];
+        if (root instanceof Element && root.matches(".mermaid:not([data-processed])")) {
+            candidates.push(root);
+        }
+        candidates.push(...root.querySelectorAll?.(".mermaid:not([data-processed])") || []);
+        if (candidates.length === 0) return;
+
+        try {
+            const mermaid = await getMermaid();
+            await mermaid.run({ nodes: candidates });
+        } catch (error) {
+            console.error("Failed to render Mermaid diagrams", error);
+            candidates.forEach((node) => {
+                node.dataset.mermaidError = "true";
+            });
+        }
+    }
 
     function initWritingSearch(root = document) {
         const input = root.querySelector("[data-writing-search]") || document.querySelector("[data-writing-search]");
@@ -174,16 +211,19 @@
     document.body.addEventListener("htmx:afterSwap", (event) => {
         initWritingSearch(event.target);
         initAccentPicker(event.target);
+        initMermaid(event.target);
     });
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => {
             initWritingSearch();
             initAccentPicker();
+            initMermaid();
         });
     } else {
         initWritingSearch();
         initAccentPicker();
+        initMermaid();
     }
 })();
 

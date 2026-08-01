@@ -33,3 +33,11 @@ func TagFilterURL(tag string) string {
 	values.Set("tag", tag)
 	return "/blog?" + values.Encode()
 }
+
+func ProjectCategoryLabel(ctx context.Context, category string) string {
+	if category == "" {
+		category = "lab"
+	}
+	key := "project_category_" + strings.ReplaceAll(category, "-", "_")
+	return i18npkg.T(ctx, key)
+}

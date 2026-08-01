@@ -9,19 +9,28 @@ import (
 	"github.com/srkn0/main/pkg/templui/icon"
 )
 
-templ ProjectList(ctx context.Context, projects []content.ProjectSummary) {
+templ ProjectList(ctx context.Context, groups []content.ProjectGroup) {
 	<section class="space-y-8" aria-labelledby="projects-title">
 		<header class="space-y-3">
 			<h1 id="projects-title" class="text-3xl font-semibold tracking-normal text-foreground">{ i18npkg.T(ctx, "projects_title") }</h1>
 			<p class="max-w-[42rem] text-base leading-7 text-muted-foreground">{ i18npkg.T(ctx, "projects_intro") }</p>
 		</header>
 
-		if len(projects) == 0 {
+		if len(groups) == 0 {
 			<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "projects_empty") }</p>
 		} else {
-			<div class="divide-y divide-border">
-				for _, project := range projects {
-					@ProjectRow(ctx, project)
+			<div class="space-y-10">
+				for _, group := range groups {
+					<section class="space-y-3">
+						<div class="border-b border-border pb-2">
+							<h2 class="text-sm font-semibold uppercase tracking-[0.12em] text-muted-foreground">{ ProjectCategoryLabel(ctx, group.Category) }</h2>
+						</div>
+						<div class="divide-y divide-border">
+							for _, project := range group.Projects {
+								@ProjectRow(ctx, project)
+							}
+						</div>
+					</section>
 				}
 			</div>
 		}
@@ -35,14 +44,16 @@ templ ProjectRow(ctx context.Context, project content.ProjectSummary) {
 				<h3 class="text-base font-semibold leading-snug text-foreground">
 					<a href={ "/projects/" + project.Slug } hx-get={ "/projects/" + project.Slug } hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true">{ project.Title }</a>
 				</h3>
-				<time datetime={ project.Date.Format("2006-01-02") } class="shrink-0 text-sm text-muted-foreground">{ project.Date.Format(i18npkg.DateFormat(ctx)) }</time>
+				<div class="flex shrink-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
+					<time datetime={ project.Date.Format("2006-01-02") }>{ project.Date.Format(i18npkg.DateFormat(ctx)) }</time>
+				</div>
 			</div>
 			if project.Description != "" {
 				<p class="text-sm leading-6 text-muted-foreground">{ project.Description }</p>
 			}
 			<div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 				if len(project.Tags) > 0 {
-					@TagList(project.Tags)
+					@ProjectTagList(project.Tags)
 				}
 				if project.Repo != "" {
 					<a href={ project.Repo } class="inline-flex items-center gap-1 text-sm">
@@ -72,7 +83,7 @@ templ ProjectDetail(ctx context.Context, project content.Project) {
 				}
 				<div class="flex flex-wrap items-center gap-x-3 gap-y-2">
 					if len(project.Tags) > 0 {
-						@TagList(project.Tags)
+						@ProjectTagList(project.Tags)
 					}
 					if project.Repo != "" {
 						<a href={ project.Repo } class="inline-flex items-center gap-1 text-sm">

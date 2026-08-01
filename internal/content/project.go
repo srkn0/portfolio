@@ -17,11 +17,18 @@ type ProjectSummary struct {
 	Image       string
 	Repo        string
 	Demo        string
+	Category    string
+	Featured    int
 }
 
 type Project struct {
 	ProjectSummary
 	HTMLContent string
+}
+
+type ProjectGroup struct {
+	Category string
+	Projects []ProjectSummary
 }
 
 type ProjectStore struct {
@@ -75,6 +82,8 @@ func LoadProjects(fsys fs.FS) (*ProjectStore, error) {
 			image, _ := meta["image"].(string)
 			repo, _ := meta["repo"].(string)
 			demo, _ := meta["demo"].(string)
+			category := metaString(meta, "category", "lab")
+			featured := metaInt(meta, "featured")
 
 			if store.byLocale[slug] == nil {
 				store.byLocale[slug] = make(map[string]Project)
@@ -89,6 +98,8 @@ func LoadProjects(fsys fs.FS) (*ProjectStore, error) {
 					Image:       image,
 					Repo:        repo,
 					Demo:        demo,
+					Category:    category,
+					Featured:    featured,
 				},
 				HTMLContent: htmlContent,
 			}
@@ -108,19 +119,56 @@ func (s *ProjectStore) GetAll(locale string) []ProjectSummary {
 		summaries = append(summaries, p.ProjectSummary)
 	}
 
-	sort.Slice(summaries, func(i, j int) bool {
-		return summaries[i].Date.After(summaries[j].Date)
-	})
+	sortProjectSummaries(summaries)
 
 	return summaries
 }
 
-func (s *ProjectStore) Latest(locale string, limit int) []ProjectSummary {
+func (s *ProjectStore) Featured(locale string, limit int) []ProjectSummary {
 	projects := s.GetAll(locale)
 	if limit <= 0 || limit >= len(projects) {
 		return projects
 	}
 	return projects[:limit]
+}
+
+func (s *ProjectStore) Latest(locale string, limit int) []ProjectSummary {
+	return s.Featured(locale, limit)
+}
+
+func (s *ProjectStore) Grouped(locale string) []ProjectGroup {
+	projects := s.GetAll(locale)
+	groupsByCategory := make(map[string][]ProjectSummary)
+	seen := make(map[string]bool)
+	for _, project := range projects {
+		category := project.Category
+		if category == "" {
+			category = "lab"
+		}
+		groupsByCategory[category] = append(groupsByCategory[category], project)
+		seen[category] = true
+	}
+
+	order := []string{"infrastructure", "platform", "template", "workstation", "lab", "wip"}
+	groups := make([]ProjectGroup, 0, len(groupsByCategory))
+	for _, category := range order {
+		if !seen[category] {
+			continue
+		}
+		groups = append(groups, ProjectGroup{Category: category, Projects: groupsByCategory[category]})
+		delete(seen, category)
+	}
+
+	var remaining []string
+	for category := range seen {
+		remaining = append(remaining, category)
+	}
+	sort.Strings(remaining)
+	for _, category := range remaining {
+		groups = append(groups, ProjectGroup{Category: category, Projects: groupsByCategory[category]})
+	}
+
+	return groups
 }
 
 func (s *ProjectStore) Get(slug, locale string) (Project, bool) {
@@ -146,4 +194,43 @@ func pickProjectLocale(locales map[string]Project, locale string) *Project {
 		return &p
 	}
 	return nil
+}
+
+func sortProjectSummaries(projects []ProjectSummary) {
+	sort.Slice(projects, func(i, j int) bool {
+		left := projects[i]
+		right := projects[j]
+		if left.Featured > 0 || right.Featured > 0 {
+			if left.Featured == 0 {
+				return false
+			}
+			if right.Featured == 0 {
+				return true
+			}
+			if left.Featured != right.Featured {
+				return left.Featured < right.Featured
+			}
+		}
+		return left.Date.After(right.Date)
+	})
+}
+
+func metaString(meta map[string]any, key string, fallback string) string {
+	if value, ok := meta[key].(string); ok && value != "" {
+		return value
+	}
+	return fallback
+}
+
+func metaInt(meta map[string]any, key string) int {
+	switch value := meta[key].(type) {
+	case int:
+		return value
+	case int64:
+		return int(value)
+	case float64:
+		return int(value)
+	default:
+		return 0
+	}
 }

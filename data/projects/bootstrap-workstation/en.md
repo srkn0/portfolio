@@ -3,6 +3,8 @@ title: "Ansible bootstrap for my workstation"
 description: "Older, still coexisting Ansible bootstrap for a Linux/WSL2 workstation. Ansible owns the OS layer, mise owns all CLI tools and language runtimes; on WSL it installs the Nerd Font onto the Windows host."
 tags: [ansible, mise, wsl, dotfiles, neovim, zsh, molecule]
 date: 2026-05-30
+category: workstation
+featured: 6
 repo: https://github.com/srkn0/bootstrap-workstation
 ---
 

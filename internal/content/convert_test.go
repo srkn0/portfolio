@@ -55,6 +55,19 @@ func TestConvertMarkdown_autoHeadingID(t *testing.T) {
 	}
 }
 
+func TestConvertMarkdown_mermaidCodeBlock(t *testing.T) {
+	html, _, err := convertMarkdown([]byte("```mermaid\nflowchart TD\n  A --> B\n```\n"))
+	if err != nil {
+		t.Fatalf("convertMarkdown: %v", err)
+	}
+	if !strings.Contains(html, `<pre class="mermaid">flowchart TD`) {
+		t.Errorf("expected mermaid pre block, got: %s", html)
+	}
+	if strings.Contains(html, `language-mermaid`) {
+		t.Errorf("expected mermaid code class to be converted, got: %s", html)
+	}
+}
+
 func TestParseMeta_allFields(t *testing.T) {
 	meta := map[string]any{
 		"title":       "T",
