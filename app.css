@@ -11,6 +11,14 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Let the reading UI breathe a little on wide desktop canvases while keeping
+   browser zoom as the user's primary scaling control. */
+@media (min-width: 100rem) {
+    html {
+        font-size: clamp(1rem, calc(0.875rem + 0.125vw), 1.125rem);
+    }
+}
+
 /* Tailwind Typography wraps inline code in literal backtick characters via
    ::before/::after. Drop them so code spans render without the backticks. */
 .prose code::before,
@@ -65,7 +73,7 @@ html {
 
     .app-main-inner {
         max-width: 48rem;
-        margin-inline: 0 auto;
+        margin-inline: auto;
     }
 
     @media (min-width: 1024px) {
