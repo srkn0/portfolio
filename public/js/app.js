@@ -153,6 +153,20 @@
     }
 
     const accentOptions = new Set(["blue", "green", "amber", "rose", "violet"]);
+    const brandMarkPath = "M2.49-15.01L2.49-13.65L2.07-9.46L0.24-9.46L0.24-15.01L2.49-15.01ZM5.92-15.01L5.92-13.65L5.50-9.46L3.69-9.46L3.69-15.01L5.92-15.01ZM11.89-2.97L11.89-2.97Q11.89-3.39 11.46-3.64Q11.02-3.90 9.79-4.17Q8.55-4.44 7.75-4.89Q6.95-5.33 6.53-5.97Q6.11-6.60 6.11-7.42L6.11-7.42Q6.11-8.88 7.31-9.82Q8.52-10.76 10.46-10.76L10.46-10.76Q12.55-10.76 13.82-9.81Q15.09-8.87 15.09-7.32L15.09-7.32L11.79-7.32Q11.79-8.59 10.45-8.59L10.45-8.59Q9.93-8.59 9.58-8.31Q9.23-8.02 9.23-7.59L9.23-7.59Q9.23-7.15 9.66-6.88Q10.09-6.60 11.03-6.43Q11.97-6.25 12.69-6.01L12.69-6.01Q15.07-5.19 15.07-3.07L15.07-3.07Q15.07-1.62 13.78-0.71Q12.50 0.20 10.46 0.20L10.46 0.20Q9.10 0.20 8.04-0.29Q6.97-0.78 6.38-1.62Q5.78-2.46 5.78-3.39L5.78-3.39L8.86-3.39Q8.88-2.66 9.35-2.32Q9.81-1.98 10.55-1.98L10.55-1.98Q11.22-1.98 11.56-2.26Q11.89-2.53 11.89-2.97ZM23.15 0L20.85-3.94L19.92-3.01L19.92 0L16.63 0L16.63-15.01L19.92-15.01L19.92-7.04L20.25-7.48L22.73-10.57L26.68-10.57L22.98-6.22L26.92 0L23.15 0Z";
+
+    function updateBrandFavicon() {
+        const favicon = document.getElementById("dynamic-favicon") || document.querySelector("link[rel~='icon']");
+        if (!favicon) return;
+
+        const styles = getComputedStyle(document.documentElement);
+        const background = styles.getPropertyValue("--primary").trim() || "#2f5f8f";
+        const foreground = styles.getPropertyValue("--primary-foreground").trim() || "#ffffff";
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"><rect x="8" y="8" width="184" height="184" rx="40" fill="${background}"/><g fill="${foreground}" transform="matrix(6.746705710102489,0,0,6.746705710102489,8.375751150125637,149.96158081127294)" stroke="${foreground}" stroke-width="0"><path d="${brandMarkPath}"/></g></svg>`;
+
+        favicon.setAttribute("href", `data:image/svg+xml,${encodeURIComponent(svg)}`);
+        favicon.setAttribute("type", "image/svg+xml");
+    }
 
     function applyAccentColor(value) {
         const accent = accentOptions.has(value) ? value : "blue";
@@ -166,7 +180,11 @@
             const selected = button.dataset.accentOption === accent;
             button.setAttribute("aria-checked", selected ? "true" : "false");
         });
+
+        updateBrandFavicon();
     }
+
+    window.updateBrandFavicon = updateBrandFavicon;
 
     function initAccentPicker(root = document) {
         const picker = root.querySelector("[data-accent-picker]") || document.querySelector("[data-accent-picker]");
@@ -280,4 +298,5 @@
 function toggleTheme() {
     const isDark = document.documentElement.classList.toggle("dark");
     localStorage.setItem("theme", isDark ? "dark" : "light");
+    window.updateBrandFavicon?.();
 }

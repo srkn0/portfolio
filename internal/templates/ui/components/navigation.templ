@@ -18,9 +18,10 @@ templ Sidebar(ctx context.Context) {
 				hx-target={ "#" + constants.PageLayoutID }
 				hx-swap="outerHTML"
 				hx-push-url="true"
-				class="block min-w-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-sidebar"
+				class="flex min-w-0 items-center gap-2 rounded-md no-underline decoration-transparent outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-sidebar"
 			>
-				<p class="text-base font-semibold tracking-normal text-sidebar-foreground">{ i18npkg.T(ctx, "site_name") }</p>
+				@BrandMark("size-6 shrink-0")
+				<p class="text-sm font-semibold tracking-normal text-sidebar-foreground">{ i18npkg.T(ctx, "site_name") }</p>
 			</a>
 		</div>
 
@@ -57,8 +58,9 @@ templ MobileNav(ctx context.Context) {
 				hx-target={ "#" + constants.PageLayoutID }
 				hx-swap="outerHTML"
 				hx-push-url="true"
-				class="min-w-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+				class="flex min-w-0 items-center gap-2 rounded-md no-underline decoration-transparent outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
 			>
+				@BrandMark("size-6 shrink-0")
 				<span class="block truncate text-sm font-semibold text-foreground">{ i18npkg.T(ctx, "site_name") }</span>
 			</a>
 			<div class="flex shrink-0 items-center gap-1">
@@ -86,6 +88,15 @@ templ MobileNav(ctx context.Context) {
 			</div>
 		</div>
 	</header>
+}
+
+templ BrandMark(class string) {
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" class={ class } aria-hidden="true">
+		<rect x="8" y="8" width="184" height="184" rx="40" fill="var(--primary)"></rect>
+		<g fill="var(--primary-foreground)" transform="matrix(6.746705710102489,0,0,6.746705710102489,8.375751150125637,149.96158081127294)" stroke="var(--primary-foreground)" stroke-width="0">
+			<path d="M2.49-15.01L2.49-13.65L2.07-9.46L0.24-9.46L0.24-15.01L2.49-15.01ZM5.92-15.01L5.92-13.65L5.50-9.46L3.69-9.46L3.69-15.01L5.92-15.01ZM11.89-2.97L11.89-2.97Q11.89-3.39 11.46-3.64Q11.02-3.90 9.79-4.17Q8.55-4.44 7.75-4.89Q6.95-5.33 6.53-5.97Q6.11-6.60 6.11-7.42L6.11-7.42Q6.11-8.88 7.31-9.82Q8.52-10.76 10.46-10.76L10.46-10.76Q12.55-10.76 13.82-9.81Q15.09-8.87 15.09-7.32L15.09-7.32L11.79-7.32Q11.79-8.59 10.45-8.59L10.45-8.59Q9.93-8.59 9.58-8.31Q9.23-8.02 9.23-7.59L9.23-7.59Q9.23-7.15 9.66-6.88Q10.09-6.60 11.03-6.43Q11.97-6.25 12.69-6.01L12.69-6.01Q15.07-5.19 15.07-3.07L15.07-3.07Q15.07-1.62 13.78-0.71Q12.50 0.20 10.46 0.20L10.46 0.20Q9.10 0.20 8.04-0.29Q6.97-0.78 6.38-1.62Q5.78-2.46 5.78-3.39L5.78-3.39L8.86-3.39Q8.88-2.66 9.35-2.32Q9.81-1.98 10.55-1.98L10.55-1.98Q11.22-1.98 11.56-2.26Q11.89-2.53 11.89-2.97ZM23.15 0L20.85-3.94L19.92-3.01L19.92 0L16.63 0L16.63-15.01L19.92-15.01L19.92-7.04L20.25-7.48L22.73-10.57L26.68-10.57L22.98-6.22L26.92 0L23.15 0Z"></path>
+		</g>
+	</svg>
 }
 
 templ SidebarGroup(label string) {

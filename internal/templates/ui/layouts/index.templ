@@ -14,7 +14,7 @@ templ Index(ctx context.Context) {
 			<title>{ i18npkg.PageTitle(ctx) }</title>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<link rel="icon" href="/public/favicon.svg" type="image/svg+xml"/>
+			<link id="dynamic-favicon" rel="icon" href="/public/favicon.svg?v=brand-1" type="image/svg+xml"/>
 			@noFlashThemeScript()
 			<link href="/public/css/index.css?v=portfolio-archive-15" rel="stylesheet"/>
 			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
@@ -23,7 +23,7 @@ templ Index(ctx context.Context) {
 		<body>
 			<div id={ constants.GlobalToastID } class="fixed flex flex-col gap-3 bottom-4 left-4 right-4 sm:left-auto sm:right-5 sm:bottom-5 z-50 max-w-md items-end"></div>
 			{ children... }
-			<script src="/public/js/app.js?v=portfolio-archive-15" data-global-toast-id={ constants.GlobalToastID }></script>
+			<script src="/public/js/app.js?v=portfolio-archive-16" data-global-toast-id={ constants.GlobalToastID }></script>
 		</body>
 	</html>
 }
