@@ -2,6 +2,8 @@
     const currentScript = document.currentScript;
     const globalToastID = currentScript?.dataset?.globalToastId;
     let mermaidPromise;
+    let navigationStartURL = window.location.href;
+    let restoringHistory = false;
 
     function getMermaid() {
         if (!mermaidPromise) {
@@ -189,6 +191,51 @@
         button.closest("details")?.removeAttribute("open");
     });
 
+    function shouldResetScrollAfterSwap(event) {
+        const detail = event.detail || {};
+        const target = detail.target || event.target;
+        const trigger = detail.requestConfig?.elt;
+        const verb = detail.requestConfig?.verb || "";
+        const isGET = verb.toLowerCase() === "get";
+        const isMainSwap = target === document.body || target?.id === "page-layout" || target?.id === "main-content";
+        const updatesHistory = Boolean(trigger?.closest?.("[hx-push-url='true'], [data-hx-push-url='true'], [hx-replace-url='true'], [data-hx-replace-url='true']"));
+
+        if (restoringHistory || !isGET || !isMainSwap || !updatesHistory) {
+            return false;
+        }
+
+        const nextURL = new URL(
+            detail.xhr?.responseURL || detail.requestConfig?.path || trigger?.href || window.location.href,
+            window.location.href,
+        );
+        const previousURL = new URL(navigationStartURL, window.location.href);
+        return nextURL.pathname !== previousURL.pathname || nextURL.search !== previousURL.search;
+    }
+
+    function resetScrollToTop() {
+        requestAnimationFrame(() => {
+            const root = document.documentElement;
+            const previousScrollBehavior = root.style.scrollBehavior;
+            root.style.scrollBehavior = "auto";
+            window.scrollTo(0, 0);
+            root.style.scrollBehavior = previousScrollBehavior;
+        });
+    }
+
+    window.addEventListener("popstate", () => {
+        restoringHistory = true;
+        window.setTimeout(() => {
+            restoringHistory = false;
+        }, 0);
+    });
+
+    document.body.addEventListener("htmx:beforeRequest", (event) => {
+        const detail = event.detail || {};
+        if ((detail.requestConfig?.verb || "").toLowerCase() === "get") {
+            navigationStartURL = window.location.href;
+        }
+    });
+
     document.body.addEventListener("htmx:push", () => {
         const el = document.getElementById(globalToastID);
         if (el) el.innerHTML = "";
@@ -209,6 +256,9 @@
     });
 
     document.body.addEventListener("htmx:afterSwap", (event) => {
+        if (shouldResetScrollAfterSwap(event)) {
+            resetScrollToTop();
+        }
         initWritingSearch(event.target);
         initAccentPicker(event.target);
         initMermaid(event.target);
