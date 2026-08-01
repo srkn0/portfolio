@@ -21,7 +21,7 @@ func TagsText(tags []string) string {
 }
 
 func YearCount(ctx context.Context, count int) string {
-	return i18npkg.Tc(ctx, "writing_year_count", map[string]any{"Count": count})
+	return i18npkg.Tc(ctx, "posts_year_count", map[string]any{"Count": count})
 }
 
 func TagCountLabel(tag content.TagCount) string {

@@ -15,7 +15,7 @@ type ExternalLink struct {
 
 type LayoutViewModel struct {
 	CurrentPath   string
-	LatestWriting []content.PostSummary
+	LatestPosts []content.PostSummary
 	ProjectLinks  []content.ProjectSummary
 	ExternalLinks []ExternalLink
 }

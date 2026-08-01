@@ -29,7 +29,7 @@ templ Sidebar(ctx context.Context) {
 			@SidebarGroup(i18npkg.T(ctx, "sidebar_navigation")) {
 				<nav aria-label={ i18npkg.T(ctx, "sidebar_navigation") } class="space-y-1">
 					@NavItem(ctx, "/", i18npkg.T(ctx, "nav_home"), icon.House, vm.CurrentPath)
-					@NavItem(ctx, "/blog", i18npkg.T(ctx, "nav_writing"), icon.BookOpenText, vm.CurrentPath)
+					@NavItem(ctx, "/blog", i18npkg.T(ctx, "nav_posts"), icon.BookOpenText, vm.CurrentPath)
 					@NavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), icon.FolderKanban, vm.CurrentPath)
 					@NavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), icon.FileUser, vm.CurrentPath)
 					@NavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), icon.Mail, vm.CurrentPath)
@@ -73,7 +73,7 @@ templ MobileNav(ctx context.Context) {
 					<div class="absolute right-0 mt-2 w-56 rounded-md border border-border bg-popover p-2 shadow-sm">
 						<nav aria-label={ i18npkg.T(ctx, "mobile_menu_label") } class="space-y-1">
 							@MobileNavItem(ctx, "/", i18npkg.T(ctx, "nav_home"), vm.CurrentPath)
-							@MobileNavItem(ctx, "/blog", i18npkg.T(ctx, "nav_writing"), vm.CurrentPath)
+							@MobileNavItem(ctx, "/blog", i18npkg.T(ctx, "nav_posts"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/projects", i18npkg.T(ctx, "nav_projects"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/cv", i18npkg.T(ctx, "nav_cv"), vm.CurrentPath)
 							@MobileNavItem(ctx, "/contact", i18npkg.T(ctx, "nav_contact"), vm.CurrentPath)

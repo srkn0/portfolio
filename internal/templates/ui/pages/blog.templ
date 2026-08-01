@@ -10,47 +10,47 @@ import (
 )
 
 templ BlogList(ctx context.Context, archive []content.PostArchiveYear) {
-	<section class="space-y-8" aria-labelledby="writing-title">
+	<section class="space-y-8" aria-labelledby="posts-title">
 		<header class="space-y-3">
-			<h1 id="writing-title" class="text-3xl font-semibold tracking-normal text-foreground">{ i18npkg.T(ctx, "writing_title") }</h1>
-			<p class="max-w-[42rem] text-base leading-7 text-muted-foreground">{ i18npkg.T(ctx, "writing_intro") }</p>
+			<h1 id="posts-title" class="text-3xl font-semibold tracking-normal text-foreground">{ i18npkg.T(ctx, "posts_title") }</h1>
+			<p class="max-w-[42rem] text-base leading-7 text-muted-foreground">{ i18npkg.T(ctx, "posts_intro") }</p>
 		</header>
 
 		if len(archive) == 0 {
-			<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "writing_empty") }</p>
+			<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "posts_empty") }</p>
 		} else {
 			<div class="space-y-2">
-				<label for="writing-search" class="text-sm font-medium text-foreground">{ i18npkg.T(ctx, "writing_search_label") }</label>
+				<label for="posts-search" class="text-sm font-medium text-foreground">{ i18npkg.T(ctx, "posts_search_label") }</label>
 				<div class="relative">
 					<input
-						id="writing-search"
+						id="posts-search"
 						type="search"
 						class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/30"
-						placeholder={ i18npkg.T(ctx, "writing_search_placeholder") }
-						data-writing-search
+						placeholder={ i18npkg.T(ctx, "posts_search_placeholder") }
+						data-posts-search
 					/>
 				</div>
 				<div class="flex flex-wrap items-center justify-between gap-2">
 					<p
 						class="text-sm text-muted-foreground"
 						aria-live="polite"
-						data-writing-status
-						data-result-label={ i18npkg.T(ctx, "writing_result_label") }
+						data-posts-status
+						data-result-label={ i18npkg.T(ctx, "posts_result_label") }
 					></p>
 					<div
 						class="hidden items-center gap-2 rounded-md border border-border bg-secondary px-2 py-1 text-sm text-muted-foreground"
-						data-writing-active-filter
-						data-label-prefix={ i18npkg.T(ctx, "writing_filtered_by") }
+						data-posts-active-filter
+						data-label-prefix={ i18npkg.T(ctx, "posts_filtered_by") }
 					>
-						<span data-writing-active-label></span>
-						<a href="/blog" hx-get="/blog" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true" class="text-xs">{ i18npkg.T(ctx, "writing_clear_filter") }</a>
+						<span data-posts-active-label></span>
+						<a href="/blog" hx-get="/blog" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true" class="text-xs">{ i18npkg.T(ctx, "posts_clear_filter") }</a>
 					</div>
 				</div>
 			</div>
 
-			<div class="space-y-10" data-writing-archive data-empty-text={ i18npkg.T(ctx, "writing_empty_filtered") }>
+				<div class="space-y-10" data-posts-archive data-empty-text={ i18npkg.T(ctx, "posts_empty_filtered") }>
 				for _, year := range archive {
-					<section class="space-y-3" data-writing-year>
+						<section class="space-y-3" data-posts-year>
 						<div class="flex items-baseline justify-between gap-4 border-b border-border pb-2">
 							<h2 class="text-xl font-semibold text-foreground">{ fmt.Sprint(year.Year) }</h2>
 							<p class="text-sm text-muted-foreground">{ YearCount(ctx, len(year.Posts)) }</p>
@@ -70,7 +70,7 @@ templ BlogList(ctx context.Context, archive []content.PostArchiveYear) {
 templ ArchiveRow(ctx context.Context, post content.PostSummary) {
 	<article
 		class="archive-row"
-		data-writing-item
+			data-posts-item
 		data-title={ post.Title }
 		data-description={ post.Description }
 		data-tags={ TagsText(post.Tags) }

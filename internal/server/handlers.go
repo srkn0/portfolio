@@ -47,7 +47,7 @@ func (h *handlers) blogList(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	locale := i18npkg.GetLocale(ctx)
 	archive := h.posts.ArchiveByYear(locale)
-	h.writeLayout(w, r, i18npkg.T(ctx, "writing_title"), pages.BlogList(ctx, archive))
+	h.writeLayout(w, r, i18npkg.T(ctx, "posts_title"), pages.BlogList(ctx, archive))
 }
 
 func (h *handlers) blogPost(w http.ResponseWriter, r *http.Request) {
@@ -175,7 +175,7 @@ func (h *handlers) writeLayout(w http.ResponseWriter, r *http.Request, title str
 	locale := i18npkg.GetLocale(ctx)
 	ctx = components.WithLayoutData(ctx, components.LayoutViewModel{
 		CurrentPath:   r.URL.Path,
-		LatestWriting: h.posts.Latest(locale, 2),
+		LatestPosts: h.posts.Latest(locale, 2),
 		ProjectLinks:  h.projects.Latest(locale, 3),
 		ExternalLinks: h.externalLinks(locale),
 	})

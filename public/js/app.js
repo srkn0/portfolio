@@ -41,17 +41,17 @@
         }
     }
 
-    function initWritingSearch(root = document) {
-        const input = root.querySelector("[data-writing-search]") || document.querySelector("[data-writing-search]");
-        const archive = root.querySelector("[data-writing-archive]") || document.querySelector("[data-writing-archive]");
+    function initPostsSearch(root = document) {
+        const input = root.querySelector("[data-posts-search]") || document.querySelector("[data-posts-search]");
+        const archive = root.querySelector("[data-posts-archive]") || document.querySelector("[data-posts-archive]");
         if (!input || !archive || input.dataset.initialized === "true") return;
 
         input.dataset.initialized = "true";
-        const status = document.querySelector("[data-writing-status]");
+        const status = document.querySelector("[data-posts-status]");
         const emptyText = archive.dataset.emptyText || "No posts match this filter.";
         const resultLabel = status?.dataset?.resultLabel || "posts visible";
-        const activeFilter = document.querySelector("[data-writing-active-filter]");
-        const activeLabel = document.querySelector("[data-writing-active-label]");
+        const activeFilter = document.querySelector("[data-posts-active-filter]");
+        const activeLabel = document.querySelector("[data-posts-active-label]");
         const params = new URLSearchParams(window.location.search);
         let activeTags = [...new Set(params.getAll("tag").filter(Boolean))];
         const initialQuery = activeTags.join(" ") || params.get("q");
@@ -93,7 +93,7 @@
 
         const filter = () => {
             const query = input.value.trim().toLowerCase();
-            const items = [...archive.querySelectorAll("[data-writing-item]")];
+            const items = [...archive.querySelectorAll("[data-posts-item]")];
             let visible = 0;
 
             items.forEach((item) => {
@@ -111,8 +111,8 @@
                 if (match) visible += 1;
             });
 
-            archive.querySelectorAll("[data-writing-year]").forEach((year) => {
-                const hasVisibleItems = [...year.querySelectorAll("[data-writing-item]")].some((item) => !item.hidden);
+            archive.querySelectorAll("[data-posts-year]").forEach((year) => {
+                const hasVisibleItems = [...year.querySelectorAll("[data-posts-item]")].some((item) => !item.hidden);
                 year.hidden = !hasVisibleItems;
             });
 
@@ -277,19 +277,19 @@
         if (shouldResetScrollAfterSwap(event)) {
             resetScrollToTop();
         }
-        initWritingSearch(event.target);
+        initPostsSearch(event.target);
         initAccentPicker(event.target);
         initMermaid(event.target);
     });
 
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", () => {
-            initWritingSearch();
+            initPostsSearch();
             initAccentPicker();
             initMermaid();
         });
     } else {
-        initWritingSearch();
+        initPostsSearch();
         initAccentPicker();
         initMermaid();
     }

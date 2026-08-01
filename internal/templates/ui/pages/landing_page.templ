@@ -14,7 +14,7 @@ templ LandingPage(ctx context.Context, vm HomeViewModel) {
 			<div class="space-y-4 text-[1.03rem] leading-8 text-foreground">
 				<p>{ i18npkg.T(ctx, "home_intro_body") }</p>
 				<p>
-					<a href="/blog" hx-get="/blog" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true">{ i18npkg.T(ctx, "home_all_writing") }</a>
+					<a href="/blog" hx-get="/blog" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true">{ i18npkg.T(ctx, "home_all_posts") }</a>
 					<span class="mx-2 text-muted-foreground">/</span>
 					<a href="/projects" hx-get="/projects" hx-target={ "#" + constants.PageLayoutID } hx-swap="outerHTML" hx-push-url="true">{ i18npkg.T(ctx, "home_all_projects") }</a>
 					<span class="mx-2 text-muted-foreground">/</span>
@@ -23,10 +23,10 @@ templ LandingPage(ctx context.Context, vm HomeViewModel) {
 			</div>
 		</section>
 
-		<section class="space-y-4" aria-labelledby="home-latest-writing">
-			@SectionHeader("home-latest-writing", i18npkg.T(ctx, "home_latest_writing"), "/blog", i18npkg.T(ctx, "home_all_writing"))
+		<section class="space-y-4" aria-labelledby="home-latest-posts">
+			@SectionHeader("home-latest-posts", i18npkg.T(ctx, "home_latest_posts"), "/blog", i18npkg.T(ctx, "home_all_posts"))
 			if len(vm.LatestPosts) == 0 {
-				<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "writing_empty") }</p>
+				<p class="text-sm text-muted-foreground">{ i18npkg.T(ctx, "posts_empty") }</p>
 			} else {
 				<div class="divide-y divide-border">
 					for _, post := range vm.LatestPosts {
