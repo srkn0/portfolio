@@ -27,7 +27,7 @@ DevOps-Arbeit besteht zu einem großen Teil aus Feedback-Loops. Man ändert ein 
 
 AI kann diese Schritte verdichten. Sie kann einen Diff erklären, eine Fehlermeldung einordnen, PromQL oder LogQL formulieren, Kubernetes-Objekte vergleichen, verdächtige Events zusammenfassen oder eine kleine Änderung vorschlagen.
 
-Entscheidend ist aber, gegen welche Oberfläche sie arbeitet. Ein Chatfenster ohne Kontext bleibt schnell generisch. Interessant wird es, wenn das Modell Zugriff auf die gleiche Arbeitsfläche bekommt, die ich auch nutze: Repository, lokale Entwicklungsumgebung, Cluster-Zustand, Logs, Metriken, Traces, GitOps-Status und Dokumentation.
+Entscheidend ist aber, gegen welche Oberfläche sie arbeitet. Ein Chatfenster ohne Kontext bleibt schnell generisch. Interessant wird es, wenn das Modell Zugriff auf dieselbe Arbeitsfläche bekommt, die ich auch nutze: Repository, lokale Entwicklungsumgebung, Cluster-Zustand, Logs, Metriken, Traces, GitOps-Status und Dokumentation.
 
 Dann wird aus einem abstrakten Assistenten ein Werkzeug im operativen Loop. Es entscheidet nicht selbst. Es hilft, schneller zu sehen, was als Nächstes geprüft werden sollte.
 
@@ -35,7 +35,7 @@ Dann wird aus einem abstrakten Assistenten ein Werkzeug im operativen Loop. Es e
 
 Beim Troubleshooting ist der erste Pass oft der teuerste. Ist es ein Rollout-Problem? Ein kaputtes Secret? Eine fehlende RBAC-Regel? Ein Image-Pull-Fehler? Eine Downstream-Abhängigkeit? Ein Netzwerkproblem? Eine falsche Kustomize-Substitution?
 
-MCP ist hier ein Game Changer, weil es AI strukturierte Zugriffe auf Tools geben kann, die sonst verteilt sind. Ein Kubernetes-MCP kann Objekte, Events und Conditions lesen. Ein Prometheus- oder Grafana-MCP kann Metriken abfragen. Loki oder OpenTelemetry-nahe Tools können Logs und Traces einbeziehen. Ein Flux- oder ArgoCD-Kontext kann zeigen, ob der gewünschte Zustand überhaupt erfolgreich reconciled wurde.
+MCP ist hier ein Game Changer, weil es AI strukturierte Zugriffe auf sonst verteilte Tools ermöglicht. Ein Kubernetes-MCP kann Objekte, Events und Conditions lesen. Ein Prometheus- oder Grafana-MCP kann Metriken abfragen. Loki oder OpenTelemetry-nahe Tools können Logs und Traces einbeziehen. Ein Flux- oder ArgoCD-Kontext kann zeigen, ob der gewünschte Zustand überhaupt erfolgreich reconciled wurde.
 
 Der Workflow wird dadurch konkreter:
 
@@ -56,11 +56,11 @@ Der zweite Bereich, in dem ich den Nutzen stark sehe, ist lokale Entwicklung geg
 
 AI verschiebt diese Grenze. Sie kann beim Backend, bei UI-Komponenten, beim Operator-Code, bei Tests oder beim Glue-Code helfen. Richtig stark wird das aber erst, wenn die Anwendung nicht nur lokal gegen Mocks läuft, sondern früh gegen echte Kubernetes-Objekte validiert wird.
 
-Ein lokaler KinD-Cluster mit denselben CRDs, RBAC-Regeln, Helm-Charts und Ingress-Pfaden wie Produktion ist dafür eine gute Arbeitsfläche. Der Code trifft nicht auf eine Simulation, sondern auf die Kubernetes-API. Ein Operator reconciled echte Custom Resources. Status-Patches, OwnerReferences, Events und RBAC-Probleme existieren wirklich.
+Ein lokaler KinD-Cluster mit denselben CRDs, RBAC-Regeln, Helm-Charts und Ingress-Pfaden wie in Produktion ist dafür eine gute Arbeitsfläche. Der Code trifft nicht auf eine Simulation, sondern auf die Kubernetes-API. Ein Operator reconciled echte Custom Resources. Status-Patches, OwnerReferences, Events und RBAC-Probleme existieren wirklich.
 
-Genau diesen Ansatz nutze ich in [kubeplate](/projects/kubeplate): ein Monorepo mit Operator, API, Weboberfläche, Datenbank, Helm-Chart, CI und lokalem Dev-Loop über KinD und DevSpace. `devspace dev` synchronisiert Dateien in die Pods, Web, Server und Operator laden heiß neu, und eine Änderung ist Sekunden später im Cluster aktiv.
+Genau diesen Ansatz nutze ich in [kubeplate](/projects/kubeplate): ein Monorepo mit Operator, API, Weboberfläche, Datenbank, Helm-Chart, CI und lokalem Dev-Loop über KinD und DevSpace. `devspace dev` synchronisiert Dateien in die Pods und sorgt bei Web, Server und Operator für Hot-Reload, sodass eine Änderung Sekunden später im Cluster aktiv ist.
 
-Für [devhub](/projects/devhub) ist das gleiche Prinzip noch interessanter. Das Projekt ist ein experimentelles Self-Service-Portal für Kubernetes. Die Idee lässt sich nicht sinnvoll nur mit Mock-Daten bewerten, weil der Kern der Anwendung aus Kubernetes-Interaktion besteht: Umgebungen, Services, Datenbanken, Workspaces, Status aus dem Cluster, gekapselt hinter API und Operator.
+Für [devhub](/projects/devhub) ist dasselbe Prinzip noch interessanter. Das Projekt ist ein experimentelles Self-Service-Portal für Kubernetes. Die Idee lässt sich nicht sinnvoll nur mit Mock-Daten bewerten, weil der Kern der Anwendung aus Kubernetes-Interaktion besteht: Umgebungen, Services, Datenbanken, Workspaces, Status aus dem Cluster, gekapselt hinter API und Operator.
 
 AI hilft hier nicht nur beim Schreiben von Code. Sie hilft, vertikale Schnitte schneller zu bauen: UI, API, Kubernetes-Client, CRD, Reconcile-Logik, Helm-Chart und lokale Validierung. Als DevOps-orientierter Mensch kann ich dadurch Full-Stack-Prototypen bauen, ohne den Infrastrukturbezug zu verlieren.
 

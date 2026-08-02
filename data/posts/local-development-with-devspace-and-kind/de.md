@@ -1,13 +1,13 @@
 ---
 title: "Entwicklung gegen ein prod-nahes Cluster mit DevSpace und KinD"
-description: "Lokale Entwicklung gegen ein echtes Kubernetes statt gegen Mocks: ein KinD-Cluster mit demselben Helm-Chart wie Produktion, ein Bootstrap-Skript in einem Befehl, und der DevSpace-Hot-Reload-Loop mit File-Sync über mehrere Dienste. Warum Prod-Parität die Entwicklung konsistenter macht."
+description: "Lokale Entwicklung gegen ein echtes Kubernetes statt gegen Mocks: ein KinD-Cluster mit demselben Helm-Chart wie in Produktion, ein Bootstrap-Skript in einem Befehl und der DevSpace-Hot-Reload-Loop mit File-Sync über mehrere Dienste. Warum Prod-Parität die Entwicklung konsistenter macht."
 tags: [kubernetes, devspace, kind, developer-experience, helm]
 date: 2026-05-22
 ---
 
 ## Das Problem mit lokaler Entwicklung
 
-Lokale Umgebungen weichen von Produktion ab. Ein Docker-Compose-Stack oder Mocks bilden Datenbank und HTTP nach, aber nicht das, worauf der Code in Produktion trifft: Kubernetes-Manifeste, CRDs, RBAC, Service-Discovery und Ingress-Routing. Fehler tauchen dann erst beim Deploy auf.
+Lokale Umgebungen weichen von Produktion ab. Ein Docker-Compose-Stack oder Mocks bilden Datenbank und HTTP nach, aber nicht das, worauf der Code in Produktion trifft: Kubernetes-Manifeste, CRDs, RBAC, Service-Discovery und Ingress-Routing. Fehler tauchen dann erst bei der Bereitstellung auf.
 
 Bei einem Kubernetes-Operator ist die Lücke besonders groß. Ein Operator reconciled Custom Resources über die Kubernetes-API. Ohne echte API gibt es nichts zu reconcilen. Der Operator lässt sich nur sinnvoll gegen ein laufendes Cluster entwickeln.
 
@@ -15,7 +15,7 @@ Das hier beschriebene Setup stammt aus dem Projekt [kubeplate](/projects/kubepla
 
 ## Ein echtes Cluster lokal mit KinD
 
-KinD startet ein vollständiges Kubernetes in Docker-Containern. In dieses Cluster wird dasselbe Helm-Chart deployt, das auch in Produktion läuft: dieselben CRDs, dieselbe RBAC, dieselbe Datenbank, dasselbe Routing.
+KinD startet ein vollständiges Kubernetes in Docker-Containern. In dieses Cluster wird dasselbe Helm-Chart deployt, das auch in Produktion läuft: dieselben CRDs, dieselben RBAC-Regeln, dieselbe Datenbank, dasselbe Routing.
 
 Das ist Parität statt Simulation. Was lokal funktioniert, funktioniert auch im Cluster, weil es dasselbe Cluster ist.
 
@@ -58,7 +58,7 @@ dev:
 Drei Mechanismen greifen ineinander:
 
 - File-Sync spiegelt geänderte Dateien sofort in den Pod, ohne ein neues Image zu bauen.
-- Jeder Stack lädt heiß neu: die Weboberfläche über den Dev-Server, der Server über einen Watch-Prozess, der Operator über `air`, das die Go-Binary bei jeder Änderung neu baut.
+- Jeder Stack nutzt Hot-Reload: die Weboberfläche über den Dev-Server, der Server über einen Watch-Prozess und der Operator über `air`, das die Go-Binary bei jeder Änderung neu baut.
 - Caches wie `node_modules` und der Go-Modul-Cache liegen auf persistenten Volumes und überstehen Pod-Neustarts.
 
 Eine Codeänderung ist damit Sekunden später im Cluster aktiv. Der innere Loop ist so kurz wie bei rein lokaler Entwicklung, läuft aber gegen echtes Kubernetes.
@@ -85,7 +85,7 @@ Drei Befehle vom Klon bis zum Live-Coding: Abhängigkeiten installieren, das Clu
 - KinD startet ein echtes Kubernetes lokal, in das dasselbe Helm-Chart wie in Produktion deployt wird
 - Port-Mappings bringen echtes Ingress-Routing auf den lokalen Host
 - Ein idempotentes Bootstrap-Skript macht das Onboarding zu einem Befehl
-- `devspace dev` synchronisiert Dateien live und lädt jeden Dienst heiß neu, ohne Image-Rebuild
+- `devspace dev` synchronisiert Dateien live und nutzt für jeden Dienst Hot-Reload, ohne Image-Rebuild
 - Persistente Caches halten den inneren Loop kurz
 - Entwicklung gegen echte CRDs, RBAC und Routing verschiebt keine Fehlerklasse mehr auf den Deploy
 - Eine geteilte Cluster-Definition macht die Umgebung im Team konsistent

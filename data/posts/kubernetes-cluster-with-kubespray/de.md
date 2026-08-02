@@ -120,7 +120,7 @@ ssh root@"$IP" "cat /etc/kubernetes/admin.conf" \
 
 ## Upgrades und Wartung
 
-kubespray bringt für jeden Lebenszyklus-Schritt ein eigenes Playbook mit. Alle laufen über dieselbe Container-Invocation, nur das Playbook am Ende wechselt.
+kubespray bringt für jeden Lebenszyklus-Schritt ein eigenes Playbook mit. Alle laufen über denselben Container-Aufruf, nur das Playbook am Ende wechselt.
 
 - `upgrade-cluster.yml` hebt das Cluster kontrolliert Knoten für Knoten auf eine neue Version
 - `scale.yml` fügt Worker hinzu

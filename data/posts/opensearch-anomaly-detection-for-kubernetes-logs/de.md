@@ -23,11 +23,11 @@ Das Feature nutzt den Random Cut Forest (RCF) Algorithmus. Ausgewertet werden nu
 
 Logs, Metriken und Traces lassen sich aus einem OpenTelemetry-Setup über eine Zwischenkomponente, den Data Prepper, nach OpenSearch pushen.
 
-Data Prepper ist eine Collector-Komponente von OpenSearch. Sie nimmt Logs, Metriken und Traces entgegen und erlaubt deren Transformation in einer Custom Pipeline, ähnlich dem OpenTelemetry Collector. Anschließend schiebt sie die Daten an OpenSearch weiter.
+Data Prepper ist eine Collector-Komponente von OpenSearch. Sie nimmt Logs, Metriken und Traces entgegen und erlaubt deren Transformation in einer Custom Pipeline, ähnlich dem OpenTelemetry Collector. Anschließend leitet sie die Daten an OpenSearch weiter.
 
 ![Architektur: OpenTelemetry Collector, Data Prepper und OpenSearch Cluster mit OpenSearch Dashboards als Frontend](/public/img/posts/opensearch-anomaly-detection/architecture.png)
 
-Der OpenTelemetry Collector exportiert die Daten an die `otel_logs_source` des Data Prepper auf Port `21892`. Data Prepper schiebt sie an ein OpenSearch Cluster. OpenSearch Dashboards dient als Frontend.
+Der OpenTelemetry Collector exportiert die Daten an die `otel_logs_source` des Data Prepper auf Port `21892`. Data Prepper leitet sie an ein OpenSearch-Cluster weiter. OpenSearch Dashboards dient als Frontend.
 
 ## Setup
 
@@ -123,7 +123,7 @@ Anomaly Detection in OpenSearch erfordert numerische Features. Bei Logs sind die
 
 Kubernetes-Logs aus dem OpenTelemetry Collector tragen keine numerischen Felder. Felder wie `droppedAttributesCount`, `flags` und `severityNumber` werden zwar indexiert, bleiben für Kubernetes-Logs und -Events aber leer. Nutzbar ist daher nur `count()`, also das Log-Volumen pro Feld.
 
-Anwendungslogs können `severityNumber` als reales numerisches Feature enthalten, auf das sich ein Detector aufsetzen lässt.
+Anwendungslogs können `severityNumber` als echtes numerisches Feature enthalten, das als Grundlage für einen Detector dienen kann.
 
 Weitere numerische Features erfordern Data Prepper Pipelines, die Logs zu Metriken konvertieren. Dabei wird festgelegt, welche Felder relevant sind und wie daraus aussagekräftige Zahlenwerte entstehen.
 

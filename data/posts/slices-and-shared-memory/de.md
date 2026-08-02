@@ -60,7 +60,7 @@ x[1] = "z"
 fmt.Println(y) // ["a", "z"]
 ```
 
-Slicing kopiert nicht. Beide Variablen zeigen auf das gleiche Backing-Array.
+Slicing kopiert nicht. Beide Variablen zeigen auf dasselbe Backing-Array.
 
 Mit dem dreiteiligen Ausdruck lässt sich die Kapazität deckeln, sodass ein späteres `append` ein neues Array alloziert.
 

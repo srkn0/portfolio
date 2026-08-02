@@ -9,7 +9,7 @@ date: 2025-02-10
 
 Ein Proxmox-Host lässt sich vollständig deklarativ aufbauen, von der nackten Maschine bis zum nutzbaren VM-Storage. Jeder Schritt ist ein Ansible-Playbook oder eine Rolle, jeder Schritt ist idempotent.
 
-Der Ablauf hat vier Stufen: ein preseedetes Debian-Image installiert die Basis, Ansible richtet Proxmox VE ein, ZFS-Pools entstehen über stabile Gerätenamen, und Proxmox bekommt diese Pools als Storage. Das vollständige Setup liegt im Projekt [homelab-proxmox](/projects/homelab-proxmox).
+Der Ablauf hat vier Stufen: ein preseedetes Debian-Image installiert die Basis, Ansible richtet Proxmox VE ein, ZFS-Pools entstehen über stabile Gerätenamen, und Proxmox bindet diese Pools als Storage ein. Das vollständige Setup liegt im Projekt [homelab-proxmox](/projects/homelab-proxmox).
 
 ## Debian-Preseed-Image
 
@@ -21,7 +21,7 @@ ansible-playbook playbooks/build_preseed_iso.yml \
   -e output_iso=preseed-debian-13-amd64-netinst.iso
 ```
 
-Die `preseed.cfg` beantwortet Locale, Zeitzone, NTP, Paketauswahl und den SSH-Server. Die Partitionierung bleibt bewusst interaktiv, damit das Zielmedium manuell bestätigt wird und keine Platte versehentlich überschrieben wird.
+Die `preseed.cfg` legt Locale, Zeitzone, NTP, Paketauswahl und den SSH-Server fest. Die Partitionierung bleibt bewusst interaktiv, damit das Zielmedium manuell bestätigt wird und keine Platte versehentlich überschrieben wird.
 
 Das Post-Install-Skript bringt den Host in den Zustand, den Proxmox erwartet. Es ersetzt `systemd-timesyncd` durch `chrony`, legt die `vmbr0`-Bridge an und hinterlegt den SSH-Key für den Root-Zugang.
 
@@ -86,7 +86,7 @@ ZED_EMAIL_ADDR=admin@example.com
 
 ## Proxmox-Storage auf ZFS
 
-Zum Schluss bekommt Proxmox die Pools als Storage. Jeder Mountpoint wird als `dir`-Storage mit passendem Content-Typ registriert.
+Zum Schluss bindet Proxmox die Pools als Storage ein. Jeder Mountpoint wird als `dir`-Storage mit passendem Content-Typ registriert.
 
 ```yaml
 pve_storages:
@@ -128,5 +128,5 @@ Jede Stufe ist ein Playbook, das sich gefahrlos erneut ausführen lässt. Die ex
 - `lae.proxmox` richtet Proxmox ein, inklusive IOMMU und `vfio`-Bindung für GPU-Passthrough
 - ZFS-Pools nutzen stabile `by-id`-Geräte statt `sdX`
 - `recordsize`, `compression` und `atime` werden pro Rolle gesetzt, der ARC wird begrenzt
-- Proxmox bekommt die Pools als `dir`-Storage mit passenden Content-Typen
+- Proxmox bindet die Pools als `dir`-Storage mit passenden Content-Typen ein
 - Externe Rollen sind versions-gepinnt, Linting läuft in CI und pre-commit

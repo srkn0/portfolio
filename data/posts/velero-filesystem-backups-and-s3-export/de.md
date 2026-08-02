@@ -50,7 +50,7 @@ spec:
 
 `BackupStorageLocation`: ein S3-Bucket, in dem alle Velero-Daten wie YAML und Metadaten liegen. Single Source of Truth.
 
-`VolumeSnapshotLocation`: der Ort, an dem die Volume-Snapshots liegen. Die Metadaten im `BackupStorageLocation` referenzieren auf diesen Ort. Diese Location ist nur für Cloud-Provider gedacht. In einem Cloud-Cluster stellt der Provider eigene SnapshotClasses bereit, und ein providerspezifisches Plugin macht diese in Velero nutzbar.
+`VolumeSnapshotLocation`: der Ort, an dem die Volume-Snapshots liegen. Die Metadaten im `BackupStorageLocation` verweisen auf diesen Ort. Diese Location ist nur für Cloud-Provider gedacht. In einem Cloud-Cluster stellt der Provider eigene SnapshotClasses bereit, und ein providerspezifisches Plugin macht diese in Velero nutzbar.
 
 Für Filesystem-Backups wird keine `VolumeSnapshotLocation` benötigt. Dort nutzt Velero die Kubernetes-internen VolumeSnapshotClasses.
 
