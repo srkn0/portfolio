@@ -1,6 +1,6 @@
 ---
 title: "devhub"
-description: "AI-assisted platform lab for Kubernetes self-service: teams can deploy databases, services, and IDE workspaces from a web UI while the operator, API, and GitOps setup hide the Kubernetes details."
+description: "Platform lab for Kubernetes self-service: teams can deploy databases, services, and IDE workspaces from a web UI while the operator, API, and GitOps setup hide the Kubernetes details."
 tags: [kubernetes, platform-engineering, operator, gitops, tanstack, hono, trpc]
 date: 2026-08-01
 category: platform
@@ -12,7 +12,7 @@ repo: https://github.com/srkn0/devhub
 
 devhub is an experimental self-service portal for Kubernetes. Developers get a web UI for environments, databases, services, and in-cluster workspaces without needing direct kubeconfig, Helm, or kubectl access.
 
-The project connects platform-engineering flows, operator patterns, multi-tenancy, and modern full-stack development in one vertical slice through an internal developer platform.
+The project connects platform-engineering flows, operator patterns, multi-tenancy, and modern full-stack development into a compact prototype of an internal developer platform.
 
 ## Stack & Architecture
 
@@ -25,6 +25,6 @@ The project connects platform-engineering flows, operator patterns, multi-tenanc
 
 The UI does not talk to Kubernetes directly. Requests flow through the API and operator, and status is reflected back from the cluster. That makes the platform idea testable in a production-like setup without needing the full weight of a central platform organization.
 
-## Development Model
+## Note
 
-AI is part of the toolchain: build a hypothesis, deploy a vertical slice, test against a real cluster, then harden intentionally. That keeps platform prototypes fast enough to validate architecture decisions against real Kubernetes resources early.
+The project was created with AI support.

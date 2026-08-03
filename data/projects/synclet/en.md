@@ -1,6 +1,6 @@
 ---
 title: "synclet"
-description: "AI-assisted Django/Vue reference application for exploring contact synchronization, typed APIs, validation, testing, and delivery workflows."
+description: "Django/Vue reference application for exploring contact synchronization, typed APIs, validation, testing, and delivery workflows."
 tags: [python, django, vue, postgresql, uv, turborepo, biome]
 date: 2026-08-03
 category: lab
@@ -9,9 +9,9 @@ repo: https://github.com/srkn0/synclet
 
 ## Overview
 
-synclet is an AI-assisted Django/Vue reference application built around a small but realistic contact synchronization use case. Contacts can be managed and imported from CSV files; synchronization runs persist status, counters, duplicate handling, and errors.
+synclet is a Django/Vue reference application built around a small but realistic contact synchronization use case. Contacts can be managed and imported from CSV files; synchronization runs persist status, counters, duplicate handling, and errors.
 
-The project was created to build practical experience with Python, Django, Vue, and modern full-stack delivery workflows. Its scope is deliberately limited: synclet is not a complete SaaS platform and does not implement real Google, Microsoft, or CRM integrations.
+The project was created with AI support to build practical experience with Python, Django, Vue, and modern full-stack delivery workflows. Its scope is deliberately limited: synclet is not a complete SaaS platform and does not implement real Google, Microsoft, or CRM integrations.
 
 ## Stack & architecture
 
